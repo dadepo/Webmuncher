@@ -198,6 +198,14 @@ public class Krawkraw {
         }
     }
 
+    /**
+     * Recursively Extracts all href starting from a given url
+     *
+     * @param url the URL to start extracting from
+     * @return A set containing all the URL crawled
+     * @throws IOException
+     * @throws InterruptedException
+     */
     public Set<String> extractAllFromUrl(String url) throws IOException, InterruptedException {
         extractAllFromUrl(url, new HashSet<>());
         return null;
