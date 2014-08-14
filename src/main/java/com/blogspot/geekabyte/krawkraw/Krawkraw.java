@@ -12,11 +12,13 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -76,15 +78,54 @@ public class Krawkraw {
     @Setter @Getter
     private KrawlerAction action;
 
+
+    /**
+     * Sets a list of user agents that would be used for crawling a page. One of the given
+     * user agents would be selected randomly for each page request. The default is
+     * Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6")
+     * <p/>
+     * --SETTER--
+     * Sets the user agents
+     *
+     * @param userAgents a list of user agents
+     * <p/>
+     * --GETTER--
+     * Returns the user agents that has been set
+     * @Return the user agents
+     */
+    @Setter @Getter
+    private List<String> userAgents = new ArrayList<>();
+
+
+    /**
+     * Sets a list of referrals that would be used for crawling a page. One of the given
+     * referrals would be selected randomly for each page request. The default is www.google.com
+     * <p/>
+     * --SETTER--
+     * Sets the referrals
+     *
+     * @param referrals a list of referrals
+     * <p/>
+     * --GETTER--
+     * Returns the referrals that has been set
+     * @Return the referrals
+     */
+    @Setter @Getter
+    private List<String> referrals = new ArrayList<>();
+
+
     public Krawkraw() {
 
     }
 
     public Document getDocumentFromUrl(String url) throws IOException {
+        String userAgent = randomSelectUserAgent();
+        String referral = randomSelectreferral();
         Document doc = Jsoup
                 .connect(url)
-                .userAgent("Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6")
-                .referrer("http://www.google.com").get();
+                .userAgent(userAgent)
+                .referrer(referral).get();
+        log.info("Fetched {} with User Agent: {} and Referral {}", url, userAgent, referral);
         return doc;
     }
 
@@ -220,5 +261,28 @@ public class Krawkraw {
     private Set<String> filterOutParamsGeneratedString(Set<String> urls) {
         urls = urls.stream().filter(u -> !u.contains("?C=")).collect(Collectors.toSet());
         return urls;
+    }
+
+
+    private String randomSelectUserAgent() {
+        if (userAgents.size() == 0) {
+            return "Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6";
+        }
+
+        Collections.shuffle(userAgents);
+        Random random = new Random();
+        int randomIndex = random.nextInt(userAgents.size());
+        return userAgents.get(randomIndex);
+    }
+
+    private String randomSelectreferral() {
+        if (referrals.size() == 0) {
+            return "www.google.com";
+        }
+
+        Collections.shuffle(referrals);
+        Random random = new Random();
+        int randomIndex = random.nextInt(referrals.size());
+        return referrals.get(randomIndex);
     }
 }
