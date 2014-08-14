@@ -11,9 +11,10 @@ import lombok.Setter;
 
 public class FetchedPage {
 
-    @Setter @Getter String url;
-    @Setter @Getter int status;
-    @Setter @Getter String title;
-    @Setter @Getter long loadTime;
-    @Setter @Getter String html;
+    @Setter @Getter private String url;
+    @Setter @Getter private int status;
+    @Setter @Getter private String title;
+    @Setter @Getter private long loadTime;
+    @Setter @Getter private String html;
+
 }

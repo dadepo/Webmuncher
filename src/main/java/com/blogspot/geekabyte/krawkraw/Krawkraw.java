@@ -147,6 +147,8 @@ public class Krawkraw {
         Map<String, Document> out = new HashMap<>();
         // first recursive break condition
         if (!excludeURLs.contains(url)) {
+            // create fetechedPage
+            FetchedPage fetchedPage = new FetchedPage();
             try {
                 // Extract HTML from URL passed in
                 Long before = new Date().getTime();
@@ -163,8 +165,6 @@ public class Krawkraw {
                 excludeURLs.add(url);
                 out.put(url, doc);
 
-                // create fetechedPage
-                FetchedPage fetchedPage = new FetchedPage();
                 fetchedPage.setUrl(url);
                 fetchedPage.setStatus(200);
                 fetchedPage.setHtml(doc.outerHtml());
@@ -176,7 +176,6 @@ public class Krawkraw {
                 Thread.sleep(delay);
             } catch (IOException e) {
                 excludeURLs.add(url);
-                FetchedPage fetchedPage = new FetchedPage();
                 fetchedPage.setStatus(404);
                 fetchedPage.setUrl(url);
                 action.execute(fetchedPage);
