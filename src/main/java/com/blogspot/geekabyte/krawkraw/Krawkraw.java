@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  */
 public class Krawkraw {
 
-    Logger log = LoggerFactory.getLogger(Krawkraw.class);
+    Logger logger = LoggerFactory.getLogger(Krawkraw.class);
 
     private final String defaultCharset = "UTF-8";
 
@@ -132,7 +132,7 @@ public class Krawkraw {
                 .connect(url)
                 .userAgent(userAgent)
                 .referrer(referral).get();
-        log.info("Fetched {} with User Agent: {} and Referral {}", url, userAgent, referral);
+        logger.info("Fetched {} with User Agent: {} and Referral {}", url, userAgent, referral);
         return doc;
     }
 
@@ -183,11 +183,33 @@ public class Krawkraw {
      * @throws IOException
      * @throws InterruptedException
      */
-    public Set<String> extractAllFromUrl(String url, Set<String> excludeURLs)
+    public Set<String> extractAllFromUrl(String url, Set<String> excludeURLs) throws IOException, InterruptedException {
+        return extractAllFromUrl(url, excludeURLs, new HashSet<String>());
+    }
+
+    /**
+     * Recursively Extracts all href starting from a given url
+     *
+     * @param url the URL to start extracting from
+     * @return A set containing all the URL crawled
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    public Set<String> extractAllFromUrl(String url) throws IOException, InterruptedException {
+        return extractAllFromUrl(url, new HashSet<>());
+    }
+
+    private Set<String> extractAllFromUrl(String url, Set<String> excludeURLs, Set<String> crawledURLs)
             throws IOException, InterruptedException {
 
         if (excludeURLs == null) {
             excludeURLs = new HashSet<>();
+        }
+
+        if (crawledURLs == null) {
+            crawledURLs = new HashSet<>();
+        } else {
+            excludeURLs.addAll(crawledURLs);
         }
 
         Document doc;
@@ -210,7 +232,7 @@ public class Krawkraw {
                 // update processing variables
                 // tempresult for keeping processed URL to prevent double processing
                 // pagesOut the map<String, Document> that would be the final result
-                excludeURLs.add(url);
+                crawledURLs.add(url);
                 out.put(url, doc);
 
                 fetchedPage.setUrl(url);
@@ -221,15 +243,17 @@ public class Krawkraw {
 
                 // perform action on fetchedPage
                 action.execute(fetchedPage);
+                logger.info("Crawled {}", url);
                 Thread.sleep(delay);
             } catch (IOException e) {
-                excludeURLs.add(url);
+                crawledURLs.add(url);
                 fetchedPage.setStatus(404);
                 fetchedPage.setUrl(url);
                 action.execute(fetchedPage);
-                log.error("Failed to crawl {}", url, e);
+                logger.error("Failed to crawl {}", url, e);
             }
         } else {
+            crawledURLs.add(url);
             return hrefs;
         }
         // second recursive break condition
@@ -240,23 +264,10 @@ public class Krawkraw {
             hrefs = filterOutParamsGeneratedString(hrefs);
             hrefs = filterOutExternalUrls(hrefs);
             for (String href : hrefs) {
-                extractAllFromUrl(href, excludeURLs);
+                extractAllFromUrl(href, excludeURLs, crawledURLs);
             }
-            return hrefs;
+            return crawledURLs;
         }
-    }
-
-    /**
-     * Recursively Extracts all href starting from a given url
-     *
-     * @param url the URL to start extracting from
-     * @return A set containing all the URL crawled
-     * @throws IOException
-     * @throws InterruptedException
-     */
-    public Set<String> extractAllFromUrl(String url) throws IOException, InterruptedException {
-        extractAllFromUrl(url, new HashSet<>());
-        return null;
     }
 
     private Set<String> filterOutExternalUrls(Set<String> urls) {
