@@ -118,6 +118,13 @@ public class Krawkraw {
 
     }
 
+    /**
+     * Gets the {@link org.jsoup.nodes.Document} from a given URL
+     *
+     * @param url the URL to crawl
+     * @return {@link org.jsoup.nodes.Document}
+     * @throws IOException
+     */
     public Document getDocumentFromUrl(String url) throws IOException {
         String userAgent = randomSelectUserAgent();
         String referral = randomSelectreferral();
