@@ -1,7 +1,8 @@
 package com.blogspot.geekabyte.krawkraw;
 
 import com.blogspot.geekabyte.krawkraw.interfaces.KrawlerAction;
-import org.eclipse.jetty.server.*;
+import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -19,12 +20,12 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Set;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class KrawkrawTest {
@@ -66,27 +67,17 @@ public class KrawkrawTest {
 
     @Test
     public void test_extractAllFromUrl() throws IOException, InterruptedException {
-        // System under test
-        class action implements KrawlerAction {
 
-            private final Logger logger = LoggerFactory.getLogger(action.class);
+        KrawlerAction mockAction = mock(KrawlerAction.class);
 
-            /**
-             * Operates on given {@link com.blogspot.geekabyte.krawkraw.FetchedPage}
-             *
-             * @param page
-             */
-            @Override
-            public void execute(FetchedPage page) {
-                logger.info("Successfully handled {} for testing", page.getUrl());
-            }
-        }
-
-        krawkrawSUT.setAction(new action());
+        krawkrawSUT.setAction(mockAction);
         krawkrawSUT.setBaseUrl("localhost");
         krawkrawSUT.setDelay(0);
+        // System under test
         Set<String> hrefs = krawkrawSUT.extractAllFromUrl(host + "/mocksite/index.html");
+
         assertEquals(hrefs.size(), 6);
+        verify(mockAction, times(6)).execute(any(FetchedPage.class));
     }
 
     //==================================================== Helpers ====================================================
