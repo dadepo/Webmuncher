@@ -184,7 +184,7 @@ public class Krawkraw {
      * @throws InterruptedException
      */
     public Set<String> extractAllFromUrl(String url, Set<String> excludeURLs) throws IOException, InterruptedException {
-        return extractAllFromUrl(url, excludeURLs, new HashSet<String>());
+        return extractor(url, excludeURLs, new HashSet<String>());
     }
 
     /**
@@ -199,7 +199,7 @@ public class Krawkraw {
         return extractAllFromUrl(url, new HashSet<>());
     }
 
-    private Set<String> extractAllFromUrl(String url, Set<String> excludeURLs, Set<String> crawledURLs)
+    private Set<String> extractor(String url, Set<String> excludeURLs, Set<String> crawledURLs)
             throws IOException, InterruptedException {
 
         if (excludeURLs == null) {
@@ -264,7 +264,7 @@ public class Krawkraw {
             hrefs = filterOutParamsGeneratedString(hrefs);
             hrefs = filterOutExternalUrls(hrefs);
             for (String href : hrefs) {
-                extractAllFromUrl(href, excludeURLs, crawledURLs);
+                extractor(href, excludeURLs, crawledURLs);
             }
             return crawledURLs;
         }
