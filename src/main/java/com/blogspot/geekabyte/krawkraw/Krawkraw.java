@@ -131,7 +131,8 @@ public class Krawkraw {
         Document doc = Jsoup
                 .connect(url)
                 .userAgent(userAgent)
-                .referrer(referral).get();
+                .referrer(referral)
+                .get();
         logger.info("Fetched {} with User Agent: {} and Referral {}", url, userAgent, referral);
         return doc;
     }
@@ -175,6 +176,7 @@ public class Krawkraw {
 
     /**
      * Recursively Extracts all href starting from a given url
+     * The method is blocking. Only returns when all url has been fetched
      *
      * @param url         the URL to start extracting from
      * @param excludeURLs a set that contains already crawled URLs. You can include URLS you want omitted
@@ -183,20 +185,58 @@ public class Krawkraw {
      * @throws IOException
      * @throws InterruptedException
      */
-    public Set<String> extractAllFromUrl(String url, Set<String> excludeURLs) throws IOException, InterruptedException {
+    public Set<String> doKrawl(String url, Set<String> excludeURLs) throws IOException, InterruptedException {
         return extractor(url, excludeURLs, new HashSet<String>());
     }
 
     /**
      * Recursively Extracts all href starting from a given url
+     * The method is blocking. Only returns when all url has been fetched
      *
      * @param url the URL to start extracting from
      * @return A set containing all the URL crawled
      * @throws IOException
      * @throws InterruptedException
      */
-    public Set<String> extractAllFromUrl(String url) throws IOException, InterruptedException {
-        return extractAllFromUrl(url, new HashSet<>());
+    public Set<String> doKrawl(String url) throws IOException, InterruptedException {
+        return doKrawl(url, new HashSet<>());
+    }
+
+    /**
+     * Recursively Extracts all href starting from a given url
+     * The method is non blocking as extraction operation is called
+     * in another thread
+     *
+     * @param url
+     * @param excludeURLs
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    public void doKrawlAsync(String url, Set<String> excludeURLs) throws IOException, InterruptedException {
+        assert action != null;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    extractor(url, excludeURLs, new HashSet<String>());
+                } catch (IOException | InterruptedException e) {
+                    logger.error("Error while crawling {} asynchronously", url);
+                }
+            }
+        }).run();
+    }
+
+    /**
+     * Recursively Extracts all href starting from a given url
+     * The method is non blocking as extraction operation is called
+     * in another thread
+     *
+     * @param url
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    public void doKrawlAsync(String url) throws IOException, InterruptedException {
+        doKrawlAsync(url, new HashSet<>());
     }
 
     private Set<String> extractor(String url, Set<String> excludeURLs, Set<String> crawledURLs)

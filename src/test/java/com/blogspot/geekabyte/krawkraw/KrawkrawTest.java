@@ -36,19 +36,6 @@ public class KrawkrawTest {
     Krawkraw krawkrawSUT = new Krawkraw();
     TestServer testServer;
 
-
-    @Before
-    public void before() throws Exception {
-        testServer = new TestServer();
-        testServer.start();
-    }
-
-    @After
-    public void after() throws Exception {
-        testServer.shutDown();
-    }
-
-
     @Test
     public void test_extractAbsHref() {
         Document doc = createDocument("fivelinks");
@@ -66,7 +53,10 @@ public class KrawkrawTest {
     }
 
     @Test
-    public void test_extractAllFromUrl() throws IOException, InterruptedException {
+    public void test_extractAllFromUrl() throws Exception {
+
+        testServer = new TestServer();
+        testServer.start();
 
         KrawlerAction mockAction = mock(KrawlerAction.class);
 
@@ -74,10 +64,12 @@ public class KrawkrawTest {
         krawkrawSUT.setBaseUrl("localhost");
         krawkrawSUT.setDelay(0);
         // System under test
-        Set<String> hrefs = krawkrawSUT.extractAllFromUrl(host + "/mocksite/index.html");
+        Set<String> hrefs = krawkrawSUT.doKrawl(host + "/mocksite/index.html");
 
         assertEquals(hrefs.size(), 6);
         verify(mockAction, times(6)).execute(any(FetchedPage.class));
+
+        testServer.shutDown();
     }
 
     //==================================================== Helpers ====================================================
