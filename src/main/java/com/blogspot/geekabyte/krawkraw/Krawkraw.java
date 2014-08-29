@@ -20,6 +20,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 /**
@@ -113,6 +117,7 @@ public class Krawkraw {
     @Setter @Getter
     private List<String> referrals = new ArrayList<>();
 
+    private ExecutorService executorService;
 
     public Krawkraw() {
 
@@ -123,6 +128,7 @@ public class Krawkraw {
      *
      * @param url the URL to crawl
      * @return {@link org.jsoup.nodes.Document}
+     *
      * @throws IOException
      */
     public Document getDocumentFromUrl(String url) throws IOException {
@@ -203,6 +209,28 @@ public class Krawkraw {
     }
 
     /**
+     * Sets up for crawling in Async mode.
+     * Should be called before {@link #doKrawlAsync(String)} or {@link #doKrawlAsync(String, java.util.Set)}
+     * is called.
+     */
+    public void initializeAsync() {
+        if (executorService == null) {
+            executorService = Executors.newSingleThreadExecutor();
+        }
+    }
+
+    /**
+     * Cleans up after Async call has been finished
+     * Should ideally be called after {@link #doKrawlAsync(String)} or {@link #doKrawlAsync(String, java.util.Set)}
+     */
+    public void destroyAsync() {
+        if (executorService != null) {
+            executorService.shutdown();
+        }
+    }
+
+
+    /**
      * Recursively Extracts all href starting from a given url
      * The method is non blocking as extraction operation is called
      * in another thread
@@ -211,19 +239,22 @@ public class Krawkraw {
      * @param excludeURLs
      * @throws IOException
      * @throws InterruptedException
+     * @return {@link java.util.concurrent.Future} of a set of urls
      */
-    public void doKrawlAsync(String url, Set<String> excludeURLs) throws IOException, InterruptedException {
+    public Future<Set<String>> doKrawlAsync(String url, Set<String> excludeURLs)
+            throws IOException, InterruptedException {
         assert action != null;
-        new Thread(new Runnable() {
+
+        ExecutorService service = Executors.newSingleThreadExecutor();
+
+        Future<Set<String>> future = service.submit(new Callable<Set<String>>() {
             @Override
-            public void run() {
-                try {
-                    extractor(url, excludeURLs, new HashSet<String>());
-                } catch (IOException | InterruptedException e) {
-                    logger.error("Error while crawling {} asynchronously", url);
-                }
+            public Set<String> call() throws Exception {
+                return extractor(url, excludeURLs, new HashSet<String>());
             }
-        }).run();
+        });
+
+        return future;
     }
 
     /**
@@ -234,9 +265,10 @@ public class Krawkraw {
      * @param url
      * @throws IOException
      * @throws InterruptedException
+     * @return {@link java.util.concurrent.Future} of a set of urls
      */
-    public void doKrawlAsync(String url) throws IOException, InterruptedException {
-        doKrawlAsync(url, new HashSet<>());
+    public Future<Set<String>> doKrawlAsync(String url) throws IOException, InterruptedException {
+        return doKrawlAsync(url, new HashSet<>());
     }
 
     private Set<String> extractor(String url, Set<String> excludeURLs, Set<String> crawledURLs)

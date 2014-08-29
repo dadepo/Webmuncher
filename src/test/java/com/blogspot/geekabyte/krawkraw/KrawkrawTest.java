@@ -20,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Future;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -71,6 +72,31 @@ public class KrawkrawTest {
 
         testServer.shutDown();
     }
+
+    @Test
+    public void test_extractAllFromUrl_Asyncronously() throws Exception {
+
+        testServer = new TestServer();
+        testServer.start();
+
+        KrawlerAction mockAction = mock(KrawlerAction.class);
+
+        krawkrawSUT.setAction(mockAction);
+        krawkrawSUT.setBaseUrl("localhost");
+        krawkrawSUT.setDelay(0);
+        krawkrawSUT.initializeAsync();
+        // System under test
+        Future<Set<String>> futureHrefs = krawkrawSUT.doKrawlAsync(host + "/mocksite/index.html");
+
+        Set<String> hrefs = futureHrefs.get();
+        krawkrawSUT.destroyAsync();
+
+        assertEquals(hrefs.size(), 6);
+        verify(mockAction, times(6)).execute(any(FetchedPage.class));
+
+        testServer.shutDown();
+    }
+
 
     //==================================================== Helpers ====================================================
 
