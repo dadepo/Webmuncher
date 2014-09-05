@@ -16,5 +16,6 @@ public class FetchedPage {
     @Setter @Getter private String title;
     @Setter @Getter private long loadTime;
     @Setter @Getter private String html;
+    @Setter @Getter private String sourceUrl;
 
 }

@@ -192,7 +192,7 @@ public class Krawkraw {
      * @throws InterruptedException
      */
     public Set<String> doKrawl(String url, Set<String> excludeURLs) throws IOException, InterruptedException {
-        return extractor(url, excludeURLs, new HashSet<String>());
+        return extractor(url, excludeURLs, new HashSet<String>(), "");
     }
 
     /**
@@ -250,7 +250,7 @@ public class Krawkraw {
         Future<Set<String>> future = service.submit(new Callable<Set<String>>() {
             @Override
             public Set<String> call() throws Exception {
-                return extractor(url, excludeURLs, new HashSet<String>());
+                return extractor(url, excludeURLs, new HashSet<String>(), "");
             }
         });
 
@@ -271,7 +271,7 @@ public class Krawkraw {
         return doKrawlAsync(url, new HashSet<>());
     }
 
-    private Set<String> extractor(String url, Set<String> excludeURLs, Set<String> crawledURLs)
+    private Set<String> extractor(String url, Set<String> excludeURLs, Set<String> crawledURLs, String sourceUrl)
             throws IOException, InterruptedException {
 
         if (excludeURLs == null) {
@@ -312,6 +312,7 @@ public class Krawkraw {
                 fetchedPage.setHtml(doc.outerHtml());
                 fetchedPage.setTitle(doc.title());
                 fetchedPage.setLoadTime(loadTime);
+                fetchedPage.setSourceUrl(sourceUrl);
 
                 // perform action on fetchedPage
                 action.execute(fetchedPage);
@@ -321,6 +322,7 @@ public class Krawkraw {
                 crawledURLs.add(url);
                 fetchedPage.setStatus(404);
                 fetchedPage.setUrl(url);
+                fetchedPage.setSourceUrl(sourceUrl);
                 action.execute(fetchedPage);
                 logger.error("Failed to crawl {}", url, e);
             }
@@ -336,7 +338,7 @@ public class Krawkraw {
             hrefs = filterOutParamsGeneratedString(hrefs);
             hrefs = filterOutExternalUrls(hrefs);
             for (String href : hrefs) {
-                extractor(href, excludeURLs, crawledURLs);
+                extractor(href, excludeURLs, crawledURLs, url);
             }
             return crawledURLs;
         }
