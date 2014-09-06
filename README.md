@@ -44,11 +44,15 @@ Using KrawKraw in synchronous call may look like this:
  
 ```
 ...
-    public Set<String> doCraw(Krawkaw krawkraw) throws IOException, InterruptedException {
+public Set<String> doCraw(Krawkaw krawkraw) 
+				   throws IOException, InterruptedException {
 
-        krawkraw.setAction(new Action()); // sets the action handling fetched pages
-        krawkraw.setBaseUrl("example.com"); // base url of the destination to fetch
-        krawkraw.setDelay(3000); // Delay between subsequent request. 0 for no delay. 1000 is default
+        // sets the action handling fetched pages
+        krawkraw.setAction(new Action()); 
+        // base url of the destination to fetch
+        krawkraw.setBaseUrl("example.com");
+        // Delay between subsequent request. 0 for no delay. 1000 is default
+        krawkraw.setDelay(3000); 
         
         // Sets pages to be skipped
         Set<String> excludedUrl = new HashSet<>();
@@ -56,7 +60,7 @@ Using KrawKraw in synchronous call may look like this:
         excludedUrl.add("http://info.example.com");
         
         return krawkraw.doKrawl("http://www.example.com", excludedUrl);
-    }
+}
 ...
 
 ```
@@ -66,14 +70,18 @@ Using KrawKraw in Asynchronous call may look like this:
 ```
 ...
 
-    public Future<Set<String>> doCraw(Krawkaw krawkraw) throws IOException, InterruptedException {
-
-        krawkraw.setAction(new Action()); // sets the action handling fetched pages
-        krawkraw.setBaseUrl("example.com"); // base url of the destination to fetch
-        krawkraw.setDelay(3000); // Delay between subsequent request. 0 for no delay. 1000 is default
+public Future<Set<String>> doCrawAsync(Krawkaw krawkraw) 
+                           throws IOException, InterruptedException {
+ 		// sets the action handling fetched pages
+        krawkraw.setAction(new Action());
+        // base url of the destination to fetch
+        krawkraw.setBaseUrl("example.com"); 
+        // Delay between subsequent request. 0 for no delay. 1000 is default
+        krawkraw.setDelay(3000);
         
         // Initialize KrawKraw for Asynchronous call
-        krawkraw.initializeAsync() //destroyAsync() should be called when Future is resolved
+        //destroyAsync() should be called when Future is resolved
+        krawkraw.initializeAsync()
         
         
         // Sets pages to be skipped
@@ -82,7 +90,7 @@ Using KrawKraw in Asynchronous call may look like this:
         excludedUrl.add("http://info.example.com");
         
         return krawkraw.doKrawlAsync("http://www.example.com", excludedUrl);
-    }
+}
 ...
 
 ```
