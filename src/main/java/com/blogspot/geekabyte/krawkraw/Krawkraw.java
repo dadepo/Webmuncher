@@ -4,6 +4,7 @@ import com.blogspot.geekabyte.krawkraw.interfaces.KrawlerAction;
 import lombok.Getter;
 import lombok.Setter;
 import org.jsoup.Jsoup;
+import org.jsoup.UnsupportedMimeTypeException;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -320,7 +321,11 @@ public class Krawkraw {
                 Thread.sleep(delay);
             } catch (IOException e) {
                 crawledURLs.add(url);
-                fetchedPage.setStatus(404);
+                if (e instanceof UnsupportedMimeTypeException) {
+                    fetchedPage.setStatus(415);
+                } else {
+                    fetchedPage.setStatus(404);
+                }
                 fetchedPage.setUrl(url);
                 fetchedPage.setSourceUrl(sourceUrl);
                 action.execute(fetchedPage);
