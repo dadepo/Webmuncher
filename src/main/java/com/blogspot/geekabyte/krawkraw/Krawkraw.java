@@ -350,8 +350,11 @@ public class Krawkraw {
     }
 
     private Set<String> filterOutExternalUrls(Set<String> urls) {
-        urls = urls.stream().filter(u -> u.contains(baseUrl)).collect(Collectors.toSet());
-        urls = urls.stream().filter(u -> !u.contains("mailto")).collect(Collectors.toSet());
+        urls = urls.stream()
+                   .filter(u -> u.contains(baseUrl))
+                   .filter(u -> !u.contains("mailto"))
+                   .collect(Collectors.toSet());
+
         return urls;
     }
 

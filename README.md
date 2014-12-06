@@ -1,4 +1,4 @@
-A little something. Placed on the interweb. It crawls it.
+A web crawler.
 
 ###How to use Krawkraw.
 
