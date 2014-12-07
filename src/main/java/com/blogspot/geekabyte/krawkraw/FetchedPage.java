@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Entity representing fetched web pages
+ * Class representing fetched web pages
  *
  * @author Dadepo Aderemi.
  */

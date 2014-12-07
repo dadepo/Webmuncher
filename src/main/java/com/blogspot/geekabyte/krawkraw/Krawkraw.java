@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -67,6 +68,16 @@ public class Krawkraw {
     private int delay = 1000;
 
     /**
+     * The number of tries for failed request due to time outs
+     * --SETTER--
+     * Sets the max retry attempt. Default is 0
+     *
+     * @param the number of max try
+     */
+    @Setter
+    private int maxRetry = 0;
+
+    /**
      * The class implementing {@link com.blogspot.geekabyte.krawkraw.interfaces.KrawlerAction}
      * This class is used to operate on the {@link com.blogspot.geekabyte.krawkraw.FetchedPage}
      * returned by the crawler
@@ -119,6 +130,8 @@ public class Krawkraw {
     private List<String> referrals = new ArrayList<>();
 
     private ExecutorService executorService;
+
+    private Map<String, Integer> retryLog = new HashMap<>();
 
     public Krawkraw() {
 
@@ -320,9 +333,29 @@ public class Krawkraw {
                 logger.info("Crawled {}", url);
                 Thread.sleep(delay);
             } catch (IOException e) {
-                crawledURLs.add(url);
                 if (e instanceof UnsupportedMimeTypeException) {
                     fetchedPage.setStatus(415);
+                    crawledURLs.add(url);
+                } else if(e instanceof SocketTimeoutException) {
+                    Integer attempts = retryLog.get(url);
+                    if (attempts == null) {
+                        attempts = 0;
+                    }
+                    if (attempts == 0 && maxRetry != 0) {
+                        retryLog.put(url, 1);
+                        logger.info("Attempting the first retry to fetch url: {}", url);
+                        extractor(url, excludeURLs, crawledURLs, "");
+                        return hrefs;
+                    } else if (attempts < maxRetry) {
+                        retryLog.put(url, ++attempts);
+                        logger.info("Attempting to fetch url: {} as {} attempts", url, attempts);
+                        extractor(url, excludeURLs, crawledURLs, "");
+                        return hrefs;
+                    } else {
+                        fetchedPage.setStatus(404);
+                        crawledURLs.add(url);
+                    }
+
                 } else {
                     fetchedPage.setStatus(404);
                 }
