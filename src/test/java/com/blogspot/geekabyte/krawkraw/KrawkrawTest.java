@@ -62,7 +62,6 @@ public class KrawkrawTest {
         KrawlerAction mockAction = mock(KrawlerAction.class);
 
         krawkrawSUT.setAction(mockAction);
-        krawkrawSUT.setBaseUrl("localhost");
         krawkrawSUT.setDelay(0);
         // System under test
         Set<String> hrefs = krawkrawSUT.doKrawl(host + "/mocksite/index.html");
@@ -82,7 +81,6 @@ public class KrawkrawTest {
         KrawlerAction mockAction = mock(KrawlerAction.class);
 
         krawkrawSUT.setAction(mockAction);
-        krawkrawSUT.setBaseUrl("localhost");
         krawkrawSUT.setDelay(0);
         krawkrawSUT.initializeAsync();
         // System under test

@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -36,22 +38,9 @@ public class Krawkraw {
     Logger logger = LoggerFactory.getLogger(Krawkraw.class);
 
     private final String defaultCharset = "UTF-8";
-
-
-    /**
-     * The base URL. This ensures that the crawlers does not download external URLs
-     * --SETTER--
-     * Sets the base URL
-     *
-     * @param baseUrl the base URL
-     * <p/>
-     * --GETTER--
-     * Returns the set baseUrl
-     * @return baseUrl the base URL
-     */
-    @Setter @Getter
     private String baseUrl;
-
+    private ExecutorService executorService;
+    private Map<String, Integer> retryLog = new HashMap<>();
 
     /**
      * The delay between each krawkraw requests
@@ -129,10 +118,6 @@ public class Krawkraw {
     @Setter @Getter
     private List<String> referrals = new ArrayList<>();
 
-    private ExecutorService executorService;
-
-    private Map<String, Integer> retryLog = new HashMap<>();
-
     public Krawkraw() {
 
     }
@@ -204,8 +189,11 @@ public class Krawkraw {
      *
      * @throws IOException
      * @throws InterruptedException
+     * @throws URISyntaxException
      */
-    public Set<String> doKrawl(String url, Set<String> excludeURLs) throws IOException, InterruptedException {
+    public Set<String> doKrawl(String url, Set<String> excludeURLs)
+            throws IOException, InterruptedException, URISyntaxException {
+        setBaseUrl(url);
         return extractor(url, excludeURLs, new HashSet<String>(), "");
     }
 
@@ -217,8 +205,10 @@ public class Krawkraw {
      * @return A set containing all the URL crawled
      * @throws IOException
      * @throws InterruptedException
+     * @throws URISyntaxException
      */
-    public Set<String> doKrawl(String url) throws IOException, InterruptedException {
+    public Set<String> doKrawl(String url) throws IOException, InterruptedException, URISyntaxException {
+        setBaseUrl(url);
         return doKrawl(url, new HashSet<>());
     }
 
@@ -253,10 +243,12 @@ public class Krawkraw {
      * @param excludeURLs
      * @throws IOException
      * @throws InterruptedException
+     * @throws URISyntaxException
      * @return {@link java.util.concurrent.Future} of a set of urls
      */
     public Future<Set<String>> doKrawlAsync(String url, Set<String> excludeURLs)
-            throws IOException, InterruptedException {
+            throws IOException, InterruptedException, URISyntaxException {
+        setBaseUrl(url);
         assert action != null;
 
         ExecutorService service = Executors.newSingleThreadExecutor();
@@ -279,9 +271,11 @@ public class Krawkraw {
      * @param url
      * @throws IOException
      * @throws InterruptedException
+     * @throws URISyntaxException
      * @return {@link java.util.concurrent.Future} of a set of urls
      */
-    public Future<Set<String>> doKrawlAsync(String url) throws IOException, InterruptedException {
+    public Future<Set<String>> doKrawlAsync(String url) throws IOException, InterruptedException, URISyntaxException {
+        setBaseUrl(url);
         return doKrawlAsync(url, new HashSet<>());
     }
 
@@ -417,5 +411,26 @@ public class Krawkraw {
         Random random = new Random();
         int randomIndex = random.nextInt(referrals.size());
         return referrals.get(randomIndex);
+    }
+
+    private void setBaseUrl(String url) throws URISyntaxException {
+        URI uri = new URI(url);
+        String host = uri.getHost();
+        int breaker = 0;
+
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = host.length(); i > 0; i--) {
+            char charAt = host.charAt(i - 1);
+            stringBuilder.append(charAt);
+            if (charAt == '.') {
+                if (++breaker == 2) {
+                    stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+                    break;
+                }
+            }
+        }
+
+        String baseUrl = stringBuilder.reverse().toString();
+        this.baseUrl = baseUrl;
     }
 }
