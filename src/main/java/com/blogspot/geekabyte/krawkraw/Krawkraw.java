@@ -66,23 +66,7 @@ public class Krawkraw {
     @Setter
     private int maxRetry = 0;
 
-    /**
-     * The class implementing {@link com.blogspot.geekabyte.krawkraw.interfaces.KrawlerAction}
-     * This class is used to operate on the {@link com.blogspot.geekabyte.krawkraw.FetchedPage}
-     * returned by the crawler
-     * <p/>
-     * --SETTER--
-     * Sets the action
-     *
-     * @param action action class
-     * <p/>
-     * --GETTER--
-     * Gets the set action
-     * @return action the set action
-     */
-    @Setter @Getter
     private KrawlerAction action;
-
 
     /**
      * Sets a list of user agents that would be used for crawling a page. One of the given
@@ -101,7 +85,6 @@ public class Krawkraw {
     @Setter @Getter
     private List<String> userAgents = new ArrayList<>();
 
-
     /**
      * Sets a list of referrals that would be used for crawling a page. One of the given
      * referrals would be selected randomly for each page request. The default is www.google.com
@@ -118,8 +101,15 @@ public class Krawkraw {
     @Setter @Getter
     private List<String> referrals = new ArrayList<>();
 
-    public Krawkraw() {
-
+    /**
+     * Public constructor for {@link com.blogspot.geekabyte.krawkraw.Krawkraw}
+     * takes an instance of {@link com.blogspot.geekabyte.krawkraw.Krawkraw} which
+     * is used to operate on a fetched url
+     * represented by {@link com.blogspot.geekabyte.krawkraw.FetchedPage}
+     * @param krawlerAction
+     */
+    public Krawkraw(KrawlerAction krawlerAction) {
+        action = krawlerAction;
     }
 
     /**

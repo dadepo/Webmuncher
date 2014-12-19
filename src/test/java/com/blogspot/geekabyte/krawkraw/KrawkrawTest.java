@@ -34,11 +34,12 @@ public class KrawkrawTest {
     private final Logger logger = LoggerFactory.getLogger(Krawkraw.class);
     private final String host = "http://localhost:" + TestServer.HTTP_PORT;
 
-    Krawkraw krawkrawSUT = new Krawkraw();
     TestServer testServer;
 
     @Test
     public void test_extractAbsHref() {
+        KrawlerAction defaultMockAction = mock(KrawlerAction.class);
+        Krawkraw krawkrawSUT = new Krawkraw(defaultMockAction);
         Document doc = createDocument("fivelinks");
         // System under test
         List<String> hrefs = krawkrawSUT.extractAbsHref(doc);
@@ -47,6 +48,8 @@ public class KrawkrawTest {
 
     @Test
     public void test_extractHref() {
+        KrawlerAction defaultMockAction = mock(KrawlerAction.class);
+        Krawkraw krawkrawSUT = new Krawkraw(defaultMockAction);
         Document doc = createDocument("fivelinks");
         // System under test
         List<String> hrefs = krawkrawSUT.extractHref(doc);
@@ -55,13 +58,12 @@ public class KrawkrawTest {
 
     @Test
     public void test_extractAllFromUrl() throws Exception {
+        KrawlerAction mockAction = mock(KrawlerAction.class);
+        Krawkraw krawkrawSUT = new Krawkraw(mockAction);
 
         testServer = new TestServer();
         testServer.start();
 
-        KrawlerAction mockAction = mock(KrawlerAction.class);
-
-        krawkrawSUT.setAction(mockAction);
         krawkrawSUT.setDelay(0);
         // System under test
         Set<String> hrefs = krawkrawSUT.doKrawl(host + "/mocksite/index.html");
@@ -74,13 +76,12 @@ public class KrawkrawTest {
 
     @Test
     public void test_extractAllFromUrl_Asyncronously() throws Exception {
+        KrawlerAction mockAction = mock(KrawlerAction.class);
+        Krawkraw krawkrawSUT = new Krawkraw(mockAction);
 
         testServer = new TestServer();
         testServer.start();
 
-        KrawlerAction mockAction = mock(KrawlerAction.class);
-
-        krawkrawSUT.setAction(mockAction);
         krawkrawSUT.setDelay(0);
         krawkrawSUT.initializeAsync();
         // System under test
@@ -100,7 +101,6 @@ public class KrawkrawTest {
 
 
     private Document createDocument(String type) {
-
 
         switch (type) {
             case ("fivelinks"): {
@@ -149,7 +149,6 @@ public class KrawkrawTest {
                     baseRequest.setHandled(true);
                     response.getWriter().println(getContent(target));
                 }
-
 
                 private String getContent(String filename) {
                     byte[] contentAsBytes = null;
