@@ -28,9 +28,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git@github.com:dadepo/Krawkraw.git</connection>
         <url>https://github.com/dadepo/jprowork</url>
-        <developerConnection>scm:git:git@github.com:dadepo/Krawkraw.git</developerConnection>
+        <connection>scm:git:ssh://@github.com:dadepo/Krawkraw.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com:dadepo/Krawkraw.git</developerConnection>
     </scm>
 
     <groupId>com.blogspot.geekabyte.krawkraw</groupId>
