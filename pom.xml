@@ -31,12 +31,12 @@
         <url>https://github.com/dadepo/jprowork</url>
         <connection>scm:git:https://github.com/dadepo/Krawkraw.git</connection>
         <developerConnection>scm:git:https://github.com/dadepo/Krawkraw.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>krawler-0.1.0</tag>
     </scm>
 
     <groupId>com.blogspot.geekabyte.krawkraw</groupId>
     <artifactId>krawler</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.1.0</version>
 
     <properties>
         <jsoup.version>1.7.3</jsoup.version>
