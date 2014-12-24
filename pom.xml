@@ -31,6 +31,7 @@
         <connection>scm:git:git@github.com:dadepo/Krawkraw.git</connection>
         <url>https://github.com/dadepo/jprowork</url>
         <developerConnection>scm:git:git@github.com:dadepo/Krawkraw.git</developerConnection>
+        <tag>HEAD</tag>
     </scm>
 
     <groupId>com.blogspot.geekabyte.krawkraw</groupId>
