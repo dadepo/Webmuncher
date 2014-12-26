@@ -31,6 +31,8 @@ import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 /**
+ * <p>Krawkraw class.</p>
+ *
  * @author Dadepo Aderemi.
  */
 public class Krawkraw {
@@ -106,7 +108,8 @@ public class Krawkraw {
      * takes an instance of {@link com.blogspot.geekabyte.krawkraw.Krawkraw} which
      * is used to operate on a fetched url
      * represented by {@link com.blogspot.geekabyte.krawkraw.FetchedPage}
-     * @param krawlerAction
+     *
+     * @param krawlerAction a {@link com.blogspot.geekabyte.krawkraw.interfaces.KrawlerAction} object.
      */
     public Krawkraw(KrawlerAction krawlerAction) {
         action = krawlerAction;
@@ -117,8 +120,7 @@ public class Krawkraw {
      *
      * @param url the URL to crawl
      * @return {@link org.jsoup.nodes.Document}
-     *
-     * @throws IOException
+     * @throws java.io.IOException if any.
      */
     public Document getDocumentFromUrl(String url) throws IOException {
         String userAgent = randomSelectUserAgent();
@@ -136,7 +138,7 @@ public class Krawkraw {
     /**
      * Extracts all href from a {@link org.jsoup.nodes.Document}
      *
-     * @param doc
+     * @param doc a {@link org.jsoup.nodes.Document} object.
      * @return list of {@link org.jsoup.nodes.Document}
      */
     public List<String> extractHref(Document doc) {
@@ -176,10 +178,9 @@ public class Krawkraw {
      * @param url         the URL to start extracting from
      * @param excludeURLs a set that contains already crawled URLs. You can include URLS you want omitted
      * @return A set containing all the URL crawled
-     *
-     * @throws IOException
-     * @throws InterruptedException
-     * @throws URISyntaxException
+     * @throws java.io.IOException if any.
+     * @throws java.lang.InterruptedException if any.
+     * @throws java.net.URISyntaxException if any.
      */
     public Set<String> doKrawl(String url, Set<String> excludeURLs)
             throws IOException, InterruptedException, URISyntaxException {
@@ -193,9 +194,9 @@ public class Krawkraw {
      *
      * @param url the URL to start extracting from
      * @return A set containing all the URL crawled
-     * @throws IOException
-     * @throws InterruptedException
-     * @throws URISyntaxException
+     * @throws java.io.IOException if any.
+     * @throws java.lang.InterruptedException if any.
+     * @throws java.net.URISyntaxException if any.
      */
     public Set<String> doKrawl(String url) throws IOException, InterruptedException, URISyntaxException {
         setBaseUrl(url);
@@ -229,11 +230,11 @@ public class Krawkraw {
      * The method is non blocking as extraction operation is called
      * in another thread
      *
-     * @param url
-     * @param excludeURLs
-     * @throws IOException
-     * @throws InterruptedException
-     * @throws URISyntaxException
+     * @param url a {@link java.lang.String} object.
+     * @param excludeURLs a {@link java.util.Set} object.
+     * @throws java.io.IOException if any.
+     * @throws java.lang.InterruptedException if any.
+     * @throws java.net.URISyntaxException if any.
      * @return {@link java.util.concurrent.Future} of a set of urls
      */
     public Future<Set<String>> doKrawlAsync(String url, Set<String> excludeURLs)
@@ -258,10 +259,10 @@ public class Krawkraw {
      * The method is non blocking as extraction operation is called
      * in another thread
      *
-     * @param url
-     * @throws IOException
-     * @throws InterruptedException
-     * @throws URISyntaxException
+     * @param url a {@link java.lang.String} object.
+     * @throws java.io.IOException if any.
+     * @throws java.lang.InterruptedException if any.
+     * @throws java.net.URISyntaxException if any.
      * @return {@link java.util.concurrent.Future} of a set of urls
      */
     public Future<Set<String>> doKrawlAsync(String url) throws IOException, InterruptedException, URISyntaxException {
