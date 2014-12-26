@@ -61,7 +61,9 @@ Or a pure JDBC implementation
 
 ```
 class JdbcAction implements KrawlerAction {
-    public static final String JDBC_CONN_STRING = "jdbc:mysql://localhost/pages?user=root";
+    public static final String JDBC_CONN_STRING = 
+    "jdbc:mysql://localhost/pages?user=root";
+    
     private Connection connect = null;
     private PreparedStatement preparedStatement = null;
     
@@ -73,7 +75,8 @@ class JdbcAction implements KrawlerAction {
             connect = DriverManager.getConnection(JDBC_CONN_STRING);
 
             preparedStatement = connect
-                    .prepareStatement("insert into pages.page values (default, ?, ?, ?, ? , ?, ?)");
+                    .prepareStatement("insert into pages.page values 
+                    (default, ?, ?, ?, ? , ?, ?)");
 
 
             preparedStatement.setString(1, page.getUrl());
