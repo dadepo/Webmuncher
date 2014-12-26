@@ -1,15 +1,32 @@
-A web crawler.
+Krawkraw is a tool that can be used to easily retrieve all the contents of a website. More accurately contents under a 
+single domain. This is its perfect use case which reflects the original need for which it was written.
 
 ###How to use Krawkraw.
 
-Grab the `Krawkraw` package and have it in your classpath. `*Krawkraw*` is the main class, 
-`*KrawlerAction*` is the interface you need to have implemented that contains code that deals with the pages crawled 
-which would be an instance of `*FetchedPage*`.
+`Krawkraw` is designed around the [Strategy Pattern] (http://en.wikipedia.org/wiki/Strategy_pattern). The main object that
+would be used is the `Krawkraw` object, while the client using `Krawkraw` would need to provide an implementation of the
+`KrawlerAction` interface which contains code that operates on every fetched page represented by the `FetchedPage` object
 
-What a JPA backed KrawlerAction implementation may look like:
+The `KrawlerAction` interface has only one method that needs to be implemented. The `execute()` method. The `execute()`
+method is injected with a `FetchedPage` which contains the information extracted from every crawled pages. e.g, the HTML
+content of the page, the uri of the page, the title of the page, the time it took `Krawkraw` to retrieve the page etc.
+
+The `0.1.0` release is available via Maven central, and you can easily drop it into your project with this coordinates
+
+```xml
+<dependency>
+<groupid>com.blogspot.geekabyte.krawkraw</groupid>
+<artifactid>krawler</artifactid>
+<version>0.1.0</version>
+</dependency>
+```
+
+Or you can also build from source and have the built jar in your classpath.
+
+What a JPA backed `KrawlerAction` implementation may look like:
 
 ```
-class Action implements KrawlerAction {
+class JpaAction implements KrawlerAction {
 
         private EntityManager em;
         private EntityManagerFactory emf;
@@ -40,58 +57,94 @@ class Action implements KrawlerAction {
 }
 ```
 
-Using KrawKraw in synchronous call may look like this:
- 
-```
-...
-public Set<String> doCraw(Krawkaw krawkraw) 
-				   throws IOException, InterruptedException {
+Or a pure JDBC implementation
 
-        // sets the action handling fetched pages
-        krawkraw.setAction(new Action()); 
-        // base url of the destination to fetch
-        krawkraw.setBaseUrl("example.com");
-        // Delay between subsequent request. 0 for no delay. 1000 is default
-        krawkraw.setDelay(3000); 
-        
-        // Sets pages to be skipped
-        Set<String> excludedUrl = new HashSet<>();
-        excludedUrl.add("http://blog.example.com");
-        excludedUrl.add("http://info.example.com");
-        
-        return krawkraw.doKrawl("http://www.example.com", excludedUrl);
+```
+class JdbcAction implements KrawlerAction {
+    public static final String JDBC_CONN_STRING = "jdbc:mysql://localhost/pages?user=root";
+    private Connection connect = null;
+    private PreparedStatement preparedStatement = null;
+    
+    @Override
+    public void execute(FetchedPage page) {
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+
+            connect = DriverManager.getConnection(JDBC_CONN_STRING);
+
+            preparedStatement = connect
+                    .prepareStatement("insert into pages.page values (default, ?, ?, ?, ? , ?, ?)");
+
+
+            preparedStatement.setString(1, page.getUrl());
+            preparedStatement.setString(2, page.getTitle());
+            preparedStatement.setString(3, page.getHtml());
+            preparedStatement.setString(4, page.getSourceUrl());
+            preparedStatement.setLong(5, page.getLoadTime());
+            preparedStatement.setInt(6, page.getStatus());
+            preparedStatement.executeUpdate();
+
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
 }
-...
-
 ```
 
-Using KrawKraw in Asynchronous call may look like this:
+Once you have the `KrawlerAction` implemented, you can proceed and use it with an instance of `Krawkraw` There are two
+call mode supported. A blocking synchronous call, and a non blocking asynchronous call.
+
+Using `KrawKraw` in synchronous call may look like this:
  
 ```
-...
+// initiates a jdbc action
+JdbcAction krawlerAction = new JdbcAction();
+// creates an instance of krawkraw with an implementation of KrawlerAction
+Krawkraw krawkraw = new Krawkraw(krawlerAction);
+        
+public Set<String> fetchPage(Krawkaw krawkraw) 
+				   throws IOException, InterruptedException {
+                
+        // gets all the pages from www.example.com
+        return krawkraw.doKrawl("http://www.example.com");
+}
+```
+
+Using `KrawKraw` in asynchronous call may look like this:
+ 
+```
+// initiates a jdbc action
+JdbcAction krawlerAction = new JdbcAction();
+// creates an instance of krawkraw with an implementation of KrawlerAction
+Krawkraw krawkraw = new Krawkraw(krawlerAction);
 
 public Future<Set<String>> doCrawAsync(Krawkaw krawkraw) 
                            throws IOException, InterruptedException {
- 		// sets the action handling fetched pages
-        krawkraw.setAction(new Action());
-        // base url of the destination to fetch
-        krawkraw.setBaseUrl("example.com"); 
-        // Delay between subsequent request. 0 for no delay. 1000 is default
-        krawkraw.setDelay(3000);
-        
         // Initialize KrawKraw for Asynchronous call
         //destroyAsync() should be called when Future is resolved
         krawkraw.initializeAsync()
         
-        
-        // Sets pages to be skipped
-        Set<String> excludedUrl = new HashSet<>();
-        excludedUrl.add("http://blog.example.com");
-        excludedUrl.add("http://info.example.com");
-        
-        return krawkraw.doKrawlAsync("http://www.example.com", excludedUrl);
+        return krawkraw.doKrawlAsync("http://www.example.com");
 }
-...
-
 ```
-  
+###Brief Overview of Krawkraw API.
+
+| Modifier and Type  | Method and Description |
+| ------------- | ------------- |
+| void  | destroyAsync() Cleans up after Async call has been finished Should ideally be called after doKrawlAsync(String) or doKrawlAsync(String, java.util.Set)  |
+| Set<String>  | doKrawl(String url) Recursively Extracts all href starting from a given url The method is blocking. |
+| Set<String>  | doKrawl(String url, Set<String> excludeURLs) Recursively Extracts all href starting from a given url The method is blocking. |
+| Future<Set<String>>  | doKrawlAsync(String url) Recursively Extracts all href starting from a given url The method is non blocking as extraction operation is called in another thread. |
+| Future<Set<String>> | doKrawlAsync(String url) Recursively Extracts all href starting from a given url The method is non blocking as extraction operation is called in another thread. |
+| Future<Set<String>> | doKrawlAsync(String url, Set<String> excludeURLs) Recursively Extracts all href starting from a given url The method is non blocking as extraction operation is called in another thread. |
+| List<String> | extractAbsHref(org.jsoup.nodes.Document doc) Extracts all href from a Document using absolute resolution. |
+| List<String> | extractHref(org.jsoup.nodes.Document doc) Extracts all href from a Document. |
+| int | getDelay() Gets the set delay between krawkraw request. |
+| org.jsoup.nodes.Document | getDocumentFromUrl(String url) Gets the Document from a given URL. |
+| List<String> | getReferrals() Returns the referrals that has been set. |
+| List<String> | getUserAgents() Returns the user agents that has been set. |
+| void | initializeAsync() Sets up for crawling in Async |
+| void | setDelay(int delay) Sets the delay |
+| void | setMaxRetry(int maxRetry) The number of tries for failed request due to time outs |
+| void | setReferrals(List<String> referrals) Sets a list of referrals that would be used for crawling a page. |
+| void | setUserAgents(List<String> userAgents) Sets a list of user agents that would be used for crawling a page. |

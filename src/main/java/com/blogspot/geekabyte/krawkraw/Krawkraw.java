@@ -1,8 +1,6 @@
 package com.blogspot.geekabyte.krawkraw;
 
 import com.blogspot.geekabyte.krawkraw.interfaces.KrawlerAction;
-import lombok.Getter;
-import lombok.Setter;
 import org.jsoup.Jsoup;
 import org.jsoup.UnsupportedMimeTypeException;
 import org.jsoup.nodes.Document;
@@ -15,15 +13,7 @@ import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -43,65 +33,74 @@ public class Krawkraw {
     private String baseUrl;
     private ExecutorService executorService;
     private Map<String, Integer> retryLog = new HashMap<>();
+    private int delay = 1000;
+    private int maxRetry = 0;
+    private List<String> userAgents = new ArrayList<>();
+    private List<String> referrals = new ArrayList<>();
+    private KrawlerAction action;
 
     /**
-     * The delay between each krawkraw requests
-     * --SETTER--
-     * Sets the delay
-     *
-     * @param delay delay in milliseconds
-     * <p/>
-     * --GETTER--
      * Gets the set delay between krawkraw requests
+     *  
      * @return delay the set delay in milliseconds
      */
-    @Setter @Getter
-    private int delay = 1000;
+    public int getDelay() {
+        return delay;
+    }
 
     /**
-     * The number of tries for failed request due to time outs
-     * --SETTER--
-     * Sets the max retry attempt. Default is 0
-     *
-     * @param the number of max try
+     * Sets the delay
+     *  
+     * @param delay delay between krawkraw requests
      */
-    @Setter
-    private int maxRetry = 0;
-
-    private KrawlerAction action;
+    public void setDelay(int delay) {
+        this.delay = delay;
+    }
+    
+    /**
+     * The number of tries for failed request due to time outs
+     * @param maxRetry the number of max try
+     */
+    public void setMaxRetry(int maxRetry) {
+        this.maxRetry = maxRetry;
+    }
+    
+    /**
+     * Returns the user agents that has been set
+     * @return the user agents
+     */
+    public List<String> getUserAgents() {
+        return userAgents;
+    }
 
     /**
      * Sets a list of user agents that would be used for crawling a page. One of the given
      * user agents would be selected randomly for each page request. The default is
      * Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6")
-     * <p/>
-     * --SETTER--
-     * Sets the user agents
      *
-     * @param userAgents a list of user agents
-     * <p/>
-     * --GETTER--
-     * Returns the user agents that has been set
-     * @Return the user agents
+     * @param userAgents
      */
-    @Setter @Getter
-    private List<String> userAgents = new ArrayList<>();
+    public void setUserAgents(List<String> userAgents) {
+        this.userAgents = userAgents;
+    }
+    
+    /**
+     * Returns the referrals that has been set
+     * @return the referrals
+     */
+    public List<String> getReferrals() {
+        return referrals;
+    }
 
     /**
      * Sets a list of referrals that would be used for crawling a page. One of the given
      * referrals would be selected randomly for each page request. The default is www.google.com
-     * <p/>
-     * --SETTER--
-     * Sets the referrals
-     *
+     *  
      * @param referrals a list of referrals
-     * <p/>
-     * --GETTER--
-     * Returns the referrals that has been set
-     * @Return the referrals
      */
-    @Setter @Getter
-    private List<String> referrals = new ArrayList<>();
+    public void setReferrals(List<String> referrals) {
+        this.referrals = referrals;
+    }
 
     /**
      * Public constructor for {@link com.blogspot.geekabyte.krawkraw.Krawkraw}
