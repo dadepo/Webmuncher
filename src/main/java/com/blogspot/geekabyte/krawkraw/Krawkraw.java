@@ -342,6 +342,7 @@ public class Krawkraw {
 
                 } else {
                     fetchedPage.setStatus(404);
+                    crawledURLs.add(url);
                 }
                 fetchedPage.setUrl(url);
                 fetchedPage.setSourceUrl(sourceUrl);
