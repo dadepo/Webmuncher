@@ -115,62 +115,6 @@ public class Krawkraw {
     }
 
     /**
-     * Gets the {@link org.jsoup.nodes.Document} from a given URL
-     *
-     * @param url the URL to crawl
-     * @return {@link org.jsoup.nodes.Document}
-     * @throws java.io.IOException if any.
-     */
-    public Document getDocumentFromUrl(String url) throws IOException {
-        String userAgent = randomSelectUserAgent();
-        String referral = randomSelectreferral();
-        Document doc = Jsoup
-                .connect(url)
-                .userAgent(userAgent)
-                .referrer(referral)
-                .get();
-        logger.info("Fetched {} with User Agent: {} and Referral {}", url, userAgent, referral);
-        return doc;
-    }
-
-
-    /**
-     * Extracts all href from a {@link org.jsoup.nodes.Document}
-     *
-     * @param doc a {@link org.jsoup.nodes.Document} object.
-     * @return list of {@link org.jsoup.nodes.Document}
-     */
-    public List<String> extractHref(Document doc) {
-        List<String> hrefString = new ArrayList<String>();
-        Element content = doc.body();
-        Elements links = content.getElementsByTag("a");
-        for (Element link : links) {
-            String href = link.attr("href");
-            hrefString.add(href);
-        }
-        return hrefString;
-    }
-
-
-    /**
-     * Extracts all href from a {@link org.jsoup.nodes.Document} using absolute resolution
-     *
-     * @param doc the {@link org.jsoup.nodes.Document} to extrach hrefs from
-     * @return list of {@link org.jsoup.nodes.Document}
-     */
-    public List<String> extractAbsHref(Document doc) {
-        List<String> hrefString = new ArrayList<String>();
-        Element content = doc.body();
-        Elements links = content.getElementsByTag("a");
-        for (Element link : links) {
-            String href = link.attr("abs:href");
-            hrefString.add(href);
-        }
-        return hrefString;
-    }
-
-
-    /**
      * Recursively Extracts all href starting from a given url
      * The method is blocking. Only returns when all url has been fetched
      *
@@ -267,6 +211,61 @@ public class Krawkraw {
     public Future<Set<String>> doKrawlAsync(String url) throws IOException, InterruptedException, URISyntaxException {
         setBaseUrl(url);
         return doKrawlAsync(url, new HashSet<>());
+    }
+
+    /**
+     * Gets the {@link org.jsoup.nodes.Document} from a given URL
+     *
+     * @param url the URL to crawl
+     * @return {@link org.jsoup.nodes.Document}
+     * @throws java.io.IOException if any.
+     */
+    private Document getDocumentFromUrl(String url) throws IOException {
+        String userAgent = randomSelectUserAgent();
+        String referral = randomSelectreferral();
+        Document doc = Jsoup
+                .connect(url)
+                .userAgent(userAgent)
+                .referrer(referral)
+                .get();
+        logger.info("Fetched {} with User Agent: {} and Referral {}", url, userAgent, referral);
+        return doc;
+    }
+
+
+    /**
+     * Extracts all href from a {@link org.jsoup.nodes.Document}
+     *
+     * @param doc a {@link org.jsoup.nodes.Document} object.
+     * @return list of {@link org.jsoup.nodes.Document}
+     */
+    private List<String> extractHref(Document doc) {
+        List<String> hrefString = new ArrayList<String>();
+        Element content = doc.body();
+        Elements links = content.getElementsByTag("a");
+        for (Element link : links) {
+            String href = link.attr("href");
+            hrefString.add(href);
+        }
+        return hrefString;
+    }
+
+
+    /**
+     * Extracts all href from a {@link org.jsoup.nodes.Document} using absolute resolution
+     *
+     * @param doc the {@link org.jsoup.nodes.Document} to extrach hrefs from
+     * @return list of {@link org.jsoup.nodes.Document}
+     */
+    private List<String> extractAbsHref(Document doc) {
+        List<String> hrefString = new ArrayList<String>();
+        Element content = doc.body();
+        Elements links = content.getElementsByTag("a");
+        for (Element link : links) {
+            String href = link.attr("abs:href");
+            hrefString.add(href);
+        }
+        return hrefString;
     }
 
     private Set<String> extractor(String url, Set<String> excludeURLs, Set<String> crawledURLs, String sourceUrl)

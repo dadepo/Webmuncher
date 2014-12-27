@@ -6,26 +6,29 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.junit.*;
-import org.junit.runner.*;
-import org.mockito.runners.*;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Future;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -42,7 +45,7 @@ public class KrawkrawTest {
         Krawkraw krawkrawSUT = new Krawkraw(defaultMockAction);
         Document doc = createDocument("fivelinks");
         // System under test
-        List<String> hrefs = krawkrawSUT.extractAbsHref(doc);
+        List<String> hrefs = extractHref(doc);
         assertEquals(hrefs.size(), 5);
     }
 
@@ -52,7 +55,7 @@ public class KrawkrawTest {
         Krawkraw krawkrawSUT = new Krawkraw(defaultMockAction);
         Document doc = createDocument("fivelinks");
         // System under test
-        List<String> hrefs = krawkrawSUT.extractHref(doc);
+        List<String> hrefs = extractHref(doc);
         assertEquals(hrefs.size(), 5);
     }
 
@@ -168,5 +171,16 @@ public class KrawkrawTest {
             };
             return handler;
         }
+    }
+
+    private List<String> extractHref(Document doc) {
+        List<String> hrefString = new ArrayList<String>();
+        Element content = doc.body();
+        Elements links = content.getElementsByTag("a");
+        for (Element link : links) {
+            String href = link.attr("href");
+            hrefString.add(href);
+        }
+        return hrefString;
     }
 }

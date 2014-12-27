@@ -154,5 +154,6 @@ public Future<Set<String>> doCrawAsync(Krawkaw krawkraw)
 
 ###Change log
 0.1.1
+
 1. Fix multiple crawl of 404 links https://github.com/dadepo/Krawkraw/issues/1
 2. Some JavaDoc enhancement https://github.com/dadepo/Krawkraw/issues/2
