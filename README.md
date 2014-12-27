@@ -151,3 +151,8 @@ public Future<Set<String>> doCrawAsync(Krawkaw krawkraw)
 | void | setMaxRetry(int maxRetry) The number of tries for failed request due to time outs |
 | void | setReferrals(List<String> referrals) Sets a list of referrals that would be used for crawling a page. |
 | void | setUserAgents(List<String> userAgents) Sets a list of user agents that would be used for crawling a page. |
+
+###Change log
+0.1.1
+1. Fix multiple crawl of 404 links https://github.com/dadepo/Krawkraw/issues/1
+2. Some JavaDoc enhancement https://github.com/dadepo/Krawkraw/issues/2
