@@ -1,5 +1,6 @@
 Krawkraw is a tool that can be used to easily retrieve all the contents of a website. More accurately contents under a 
-single domain. This is its perfect use case which reflects the original need for which it was written.
+single domain. This is its perfect use case which reflects the original need for which it was written: Read about more
+on that [here] (http://geekabyte.blogspot.be/2014/12/a-web-scrapercrawler-in-java-krawkraw.html)
 
 ###How to use Krawkraw.
 
@@ -11,13 +12,13 @@ The `KrawlerAction` interface has only one method that needs to be implemented. 
 method is injected with a `FetchedPage` which contains the information extracted from every crawled pages. e.g, the HTML
 content of the page, the uri of the page, the title of the page, the time it took `Krawkraw` to retrieve the page etc.
 
-The `0.1.0` release is available via Maven central, and you can easily drop it into your project with this coordinates
+`Krawkraw` is available via Maven central, and you can easily drop it into your project with this coordinates
 
 ```xml
 <dependency>
 <groupid>com.blogspot.geekabyte.krawkraw</groupid>
 <artifactid>krawler</artifactid>
-<version>0.1.0</version>
+<version>${krawkraw.version}</version>
 </dependency>
 ```
 
@@ -140,10 +141,7 @@ public Future<Set<String>> doCrawAsync(Krawkaw krawkraw)
 | Future<Set<String>>  | doKrawlAsync(String url) Recursively Extracts all href starting from a given url The method is non blocking as extraction operation is called in another thread. |
 | Future<Set<String>> | doKrawlAsync(String url) Recursively Extracts all href starting from a given url The method is non blocking as extraction operation is called in another thread. |
 | Future<Set<String>> | doKrawlAsync(String url, Set<String> excludeURLs) Recursively Extracts all href starting from a given url The method is non blocking as extraction operation is called in another thread. |
-| List<String> | extractAbsHref(org.jsoup.nodes.Document doc) Extracts all href from a Document using absolute resolution. |
-| List<String> | extractHref(org.jsoup.nodes.Document doc) Extracts all href from a Document. |
 | int | getDelay() Gets the set delay between krawkraw request. |
-| org.jsoup.nodes.Document | getDocumentFromUrl(String url) Gets the Document from a given URL. |
 | List<String> | getReferrals() Returns the referrals that has been set. |
 | List<String> | getUserAgents() Returns the user agents that has been set. |
 | void | initializeAsync() Sets up for crawling in Async |
@@ -151,6 +149,10 @@ public Future<Set<String>> doCrawAsync(Krawkaw krawkraw)
 | void | setMaxRetry(int maxRetry) The number of tries for failed request due to time outs |
 | void | setReferrals(List<String> referrals) Sets a list of referrals that would be used for crawling a page. |
 | void | setUserAgents(List<String> userAgents) Sets a list of user agents that would be used for crawling a page. |
+
+For more documentation, the accompanying Javadoc should be helpful. It can be gotten using the
+[Javadoc tool] (http://www.oracle.com/technetwork/articles/java/index-jsp-135444.html) or via Maven using the
+[Maven Javadoc plugin] (http://maven.apache.org/plugins/maven-javadoc-plugin/).
 
 ###Change log
 0.1.1
