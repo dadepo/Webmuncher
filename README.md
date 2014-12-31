@@ -154,6 +154,8 @@ For more documentation, the accompanying Javadoc should be helpful. It can be go
 [Javadoc tool] (http://www.oracle.com/technetwork/articles/java/index-jsp-135444.html) or via Maven using the
 [Maven Javadoc plugin] (http://maven.apache.org/plugins/maven-javadoc-plugin/).
 
+Thanks to Javadoc.io, you can also access the most recent Javadoc [online](http://www.javadoc.io/doc/com.blogspot.geekabyte.krawkraw/krawler/)
+
 ###Change log
 0.1.1
 
