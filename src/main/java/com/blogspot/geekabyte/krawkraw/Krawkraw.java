@@ -49,16 +49,15 @@ public class Krawkraw {
     }
 
     /**
-     * Sets the delay
-     *  
-     * @param delay delay between krawkraw requests
+     * Sets the delay. The default is 1000.
+     * @param delay delay between each crawling requests
      */
     public void setDelay(int delay) {
         this.delay = delay;
     }
     
     /**
-     * The number of tries for failed request due to time outs
+     * The number of times to retry failed request due to time outs. The default is 0, meaning no retries.
      * @param maxRetry the number of max try
      */
     public void setMaxRetry(int maxRetry) {
@@ -104,7 +103,7 @@ public class Krawkraw {
 
     /**
      * Public constructor for {@link com.blogspot.geekabyte.krawkraw.Krawkraw}
-     * takes an instance of {@link com.blogspot.geekabyte.krawkraw.Krawkraw} which
+     * takes an instance of {@link com.blogspot.geekabyte.krawkraw.interfaces.KrawlerAction} which
      * is used to operate on a fetched url
      * represented by {@link com.blogspot.geekabyte.krawkraw.FetchedPage}
      *
@@ -222,7 +221,7 @@ public class Krawkraw {
      */
     private Document getDocumentFromUrl(String url) throws IOException {
         String userAgent = randomSelectUserAgent();
-        String referral = randomSelectreferral();
+        String referral = randomSelectReferral();
         Document doc = Jsoup
                 .connect(url)
                 .userAgent(userAgent)
@@ -231,25 +230,6 @@ public class Krawkraw {
         logger.info("Fetched {} with User Agent: {} and Referral {}", url, userAgent, referral);
         return doc;
     }
-
-
-    /**
-     * Extracts all href from a {@link org.jsoup.nodes.Document}
-     *
-     * @param doc a {@link org.jsoup.nodes.Document} object.
-     * @return list of {@link org.jsoup.nodes.Document}
-     */
-    private List<String> extractHref(Document doc) {
-        List<String> hrefString = new ArrayList<String>();
-        Element content = doc.body();
-        Elements links = content.getElementsByTag("a");
-        for (Element link : links) {
-            String href = link.attr("href");
-            hrefString.add(href);
-        }
-        return hrefString;
-    }
-
 
     /**
      * Extracts all href from a {@link org.jsoup.nodes.Document} using absolute resolution
@@ -392,7 +372,7 @@ public class Krawkraw {
         return userAgents.get(randomIndex);
     }
 
-    private String randomSelectreferral() {
+    private String randomSelectReferral() {
         if (referrals.size() == 0) {
             return "www.google.com";
         }
