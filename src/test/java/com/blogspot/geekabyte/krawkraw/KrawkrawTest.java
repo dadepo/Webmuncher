@@ -1,19 +1,17 @@
 package com.blogspot.geekabyte.krawkraw;
 
 import com.blogspot.geekabyte.krawkraw.interfaces.KrawlerAction;
+import com.blogspot.geekabyte.krawkraw.interfaces.callbacks.KrawlerExitCallback;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.*;
+import org.mockito.runners.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -22,8 +20,11 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Future;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -61,17 +62,39 @@ public class KrawkrawTest {
         testServer.start();
 
         krawkrawSUT.setDelay(0);
-        krawkrawSUT.initializeAsync();
         // System under test
         Future<Set<String>> futureHrefs = krawkrawSUT.doKrawlAsync(host + "/mocksite/index.html");
 
         Set<String> hrefs = futureHrefs.get();
-        krawkrawSUT.destroyAsync();
 
         assertEquals(hrefs.size(), 6);
         verify(mockAction, times(6)).execute(any(FetchedPage.class));
 
         testServer.shutDown();
+    }
+    
+    @Test
+    public void test_on_exit_callback() throws Exception {
+        KrawlerAction mockAction = mock(KrawlerAction.class);
+        KrawlerExitCallback mockCallBack = mock(KrawlerExitCallback.class);
+        Krawkraw krawkrawSUT = new Krawkraw(mockAction);
+        
+        testServer = new TestServer();
+        testServer.start();
+
+        krawkrawSUT.onExit(mockCallBack);
+        krawkrawSUT.setDelay(0);
+        // System under test
+        Future<Set<String>> futureHrefs = krawkrawSUT.doKrawlAsync(host + "/mocksite/index.html");
+
+        Set<String> hrefs = futureHrefs.get();
+
+        assertEquals(hrefs.size(), 6);
+        verify(mockAction, times(6)).execute(any(FetchedPage.class));
+        verify(mockCallBack).callBack(anySet());
+
+        testServer.shutDown();
+        
     }
     
     @Test

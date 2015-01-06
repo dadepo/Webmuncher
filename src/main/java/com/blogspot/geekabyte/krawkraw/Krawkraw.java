@@ -1,6 +1,7 @@
 package com.blogspot.geekabyte.krawkraw;
 
 import com.blogspot.geekabyte.krawkraw.interfaces.KrawlerAction;
+import com.blogspot.geekabyte.krawkraw.interfaces.callbacks.KrawlerExitCallback;
 import org.jsoup.Jsoup;
 import org.jsoup.UnsupportedMimeTypeException;
 import org.jsoup.nodes.Document;
@@ -13,12 +14,22 @@ import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * <p>Krawkraw class.</p>
@@ -38,6 +49,7 @@ public class Krawkraw {
     private List<String> userAgents = new ArrayList<>();
     private List<String> referrals = new ArrayList<>();
     private KrawlerAction action;
+    private KrawlerExitCallback krawlerExitCallback;
 
     /**
      * Gets the set delay between krawkraw requests
@@ -145,27 +157,15 @@ public class Krawkraw {
         return doKrawl(url, new HashSet<>());
     }
 
-    /**
-     * Sets up for crawling in Async mode.
-     * Should be called before {@link #doKrawlAsync(String)} or {@link #doKrawlAsync(String, java.util.Set)}
-     * is called.
-     */
-    public void initializeAsync() {
-        if (executorService == null) {
-            executorService = Executors.newSingleThreadExecutor();
-        }
-    }
 
     /**
-     * Cleans up after Async call has been finished
-     * Should ideally be called after {@link #doKrawlAsync(String)} or {@link #doKrawlAsync(String, java.util.Set)}
+     * Registers callback on krawlerExitCallback
+     * 
+     * @param krawlerExitCallbackCallBack the call back to fire when crawler finishes and exits
      */
-    public void destroyAsync() {
-        if (executorService != null) {
-            executorService.shutdown();
-        }
+    public void onExit(KrawlerExitCallback krawlerExitCallbackCallBack) {
+        krawlerExitCallback = krawlerExitCallbackCallBack;
     }
-
 
     /**
      * Recursively Extracts all href starting from a given url
@@ -184,9 +184,9 @@ public class Krawkraw {
         setBaseUrl(url);
         assert action != null;
 
-        ExecutorService service = Executors.newSingleThreadExecutor();
+        executorService = Executors.newSingleThreadExecutor();
 
-        Future<Set<String>> future = service.submit(new Callable<Set<String>>() {
+        Future<Set<String>> future = executorService.submit(new Callable<Set<String>>() {
             @Override
             public Set<String> call() throws Exception {
                 return extractor(url, excludeURLs, new HashSet<String>(), "");
@@ -315,7 +315,7 @@ public class Krawkraw {
                         extractor(url, excludeURLs, crawledURLs, "");
                         return hrefs;
                     } else {
-                        fetchedPage.setStatus(404);
+                        fetchedPage.setStatus(408);
                         crawledURLs.add(url);
                     }
 
@@ -341,6 +341,11 @@ public class Krawkraw {
             hrefs = filterOutExternalUrls(hrefs);
             for (String href : hrefs) {
                 extractor(href, excludeURLs, crawledURLs, url);
+            }
+
+            if (lastExtractorCall()) {
+                destroyAsync();
+                fireOnExit(crawledURLs);
             }
             return crawledURLs;
         }
@@ -402,5 +407,28 @@ public class Krawkraw {
 
         String baseUrl = stringBuilder.reverse().toString();
         this.baseUrl = baseUrl;
+    }
+
+    /**
+     * Cleans up after Async call has been finished
+     * Should ideally be called after {@link #doKrawlAsync(String)} or {@link #doKrawlAsync(String, java.util.Set)}
+     */
+    private void destroyAsync() {
+        if (executorService != null) {
+            executorService.shutdown();
+        }
+    }
+    
+    private void fireOnExit(Set<String> urls) {
+        if (krawlerExitCallback != null) {
+            krawlerExitCallback.callBack(urls);
+        }
+    }
+    
+    private boolean lastExtractorCall() {
+        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+        Stream<StackTraceElement> stream = Arrays.stream(stackTraceElements);
+        long count = stream.filter(t -> "extractor".equals(t.getMethodName())).count();
+        return count == 1;
     }
 }
