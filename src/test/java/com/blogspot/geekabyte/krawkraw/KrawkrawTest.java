@@ -2,6 +2,7 @@ package com.blogspot.geekabyte.krawkraw;
 
 import com.blogspot.geekabyte.krawkraw.interfaces.KrawlerAction;
 import com.blogspot.geekabyte.krawkraw.interfaces.callbacks.KrawlerExitCallback;
+import com.blogspot.geekabyte.krawkraw.util.CSVAction;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
@@ -11,13 +12,19 @@ import org.mockito.*;
 import org.mockito.runners.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.supercsv.io.CsvMapReader;
+import org.supercsv.io.ICsvMapReader;
+import org.supercsv.prefs.CsvPreference;
 
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Future;
 import javax.servlet.ServletException;
@@ -123,9 +130,49 @@ public class KrawkrawTest {
         assertEquals(notFoundCount, 3);
         testServer.shutDown();
     }
+    
+    @Test
+    public void testDefaultCSVUtil () throws Exception {
+
+        testServer = new TestServer();
+        testServer.start();
+        
+        CSVAction csvAction = CSVAction.builder()
+                                       .setDestination(Paths.get("out.csv"))
+                                       .setCSVFormat(CSVAction.CSVFORMAT.EXCEL)
+                                       .buildAction();
+        
+        Krawkraw krawkrawSUT = new Krawkraw(csvAction);
+        // System under test
+        Set<String> urls = krawkrawSUT.doKrawl(host + "/mocksitecsvtest/index.html");
+
+        List<Map<String, String>> maps = readCSV(csvAction.getDestination().toString());
+        assertEquals(maps.size(), 2);
+        assertEquals(maps.get(0).get("Status"), "200");
+        assertEquals(maps.get(1).get("Status"), "200");        
+        assertEquals(maps.get(0).get("Title"), "Index page");
+        assertEquals(maps.get(1).get("Title"), "Page two");
+        testServer.shutDown();
+        Files.deleteIfExists(csvAction.getDestination());
+    }
 
     //==================================================== Helpers ====================================================
 
+    
+    private List<Map<String, String>> readCSV(String filename) throws IOException {
+        List<Map<String, String>> actual = new ArrayList<>();
+        ICsvMapReader mapReader;
+        mapReader = new CsvMapReader(new FileReader(filename),CsvPreference.STANDARD_PREFERENCE);
+        final String[] header = mapReader.getHeader(true);
+        Map<String, String> customerMap;
+        while( (customerMap = mapReader.read(header)) != null ) {
+            actual.add(customerMap);
+        }
+        
+        return actual;
+    }
+    
+    
     private class TestServer {
 
         private final Logger logger = LoggerFactory.getLogger(TestServer.class);
