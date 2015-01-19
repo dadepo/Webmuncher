@@ -155,6 +155,13 @@ public class KrawkrawTest {
         testServer.shutDown();
         Files.deleteIfExists(csvAction.getDestination());
     }
+    
+    
+    @Test
+    public void testDefaultESAction() throws Exception {
+        // TODO
+
+    }
 
     //==================================================== Helpers ====================================================
 

@@ -47,6 +47,9 @@
         <junit.version>4.11</junit.version>
         <mockito.version>1.9.5</mockito.version>
         <common.version>2.4</common.version>
+        <super-csv.version>2.2.1</super-csv.version>
+        <es.version>1.4.2</es.version>
+        <jest.version>0.1.4</jest.version>
     </properties>
 
     <dependencies>
@@ -96,8 +99,20 @@
         <dependency>
             <groupId>net.sf.supercsv</groupId>
             <artifactId>super-csv</artifactId>
-            <version>2.2.1</version>
+            <version>${super-csv.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch</artifactId>
+            <version>${es.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.searchbox</groupId>
+            <artifactId>jest</artifactId>
+            <version>${jest.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>

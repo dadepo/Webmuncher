@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Implementation of {@link com.blogspot.geekabyte.krawkraw.interfaces.KrawlerAction} that dumbs crawled pages
+ * Implementation of {@link com.blogspot.geekabyte.krawkraw.interfaces.KrawlerAction} that dumps crawled pages
  * to a CSV file.
  *
  * Created by dadepo on 1/8/15.
