@@ -95,7 +95,6 @@
             <version>${jetty.version}</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>net.sf.supercsv</groupId>
             <artifactId>super-csv</artifactId>
@@ -106,13 +105,6 @@
             <artifactId>elasticsearch</artifactId>
             <version>${es.version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>io.searchbox</groupId>
-            <artifactId>jest</artifactId>
-            <version>${jest.version}</version>
-        </dependency>
-
     </dependencies>
 
     <build>
