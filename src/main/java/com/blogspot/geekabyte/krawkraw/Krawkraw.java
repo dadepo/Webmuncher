@@ -287,6 +287,7 @@ public class Krawkraw {
                 fetchedPage.setUrl(url);
                 fetchedPage.setStatus(200);
                 fetchedPage.setHtml(doc.outerHtml());
+                fetchedPage.setPlainText(Jsoup.parse(doc.outerHtml()).text());
                 fetchedPage.setTitle(doc.title());
                 fetchedPage.setLoadTime(loadTime);
                 fetchedPage.setSourceUrl(sourceUrl);

@@ -13,6 +13,7 @@ public class FetchedPage {
     private String title;
     private long loadTime;
     private String html;
+    private String plainText;
     private String sourceUrl;
 
     /**
@@ -93,6 +94,22 @@ public class FetchedPage {
      */
     public void setHtml(String html) {
         this.html = html;
+    }
+
+    /**
+     * Gets the content of the page as plain text 
+     * @return the content of the page as plain text
+     */
+    public String getPlainText() {
+        return plainText;
+    }
+
+    /**
+     * Sets the plain text version of the content of the page
+     * @param plainText plain text version of the page
+     */
+    public void setPlainText(String plainText) {
+        this.plainText = plainText;
     }
 
     /**

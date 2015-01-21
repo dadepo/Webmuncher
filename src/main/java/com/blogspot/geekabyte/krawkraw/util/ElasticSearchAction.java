@@ -41,7 +41,7 @@ public class ElasticSearchAction implements KrawlerAction {
      * Gets the name of the elastic cluster the fetched page would be indexed in
      * @return the elastic cluster name
      */
-    public String getClusterName() {
+    private String getClusterName() {
         return clusterName;
     }
 
@@ -49,7 +49,7 @@ public class ElasticSearchAction implements KrawlerAction {
      * Sets the name of the elastic cluster the fetched page would be indexed in. Default is elasticsearch
      * @param clusterName the elastic cluster name
      */
-    public void setClusterName(String clusterName) {
+    private void setClusterName(String clusterName) {
         this.clusterName = clusterName;
     }
 
@@ -57,7 +57,7 @@ public class ElasticSearchAction implements KrawlerAction {
      * Gets the index name the crawled pages would be put in.
      * @return the name of the index the crawled pages would be put in
      */
-    public String getIndexName() {
+    private String getIndexName() {
         return indexName;
     }
 
@@ -65,7 +65,7 @@ public class ElasticSearchAction implements KrawlerAction {
      * Sets the index name the crawled pages would be put in. The default is webpages
      * @param indexName the name of the index the crawled pages would be put in
      */
-    public void setIndexName(String indexName) {
+    private void setIndexName(String indexName) {
         this.indexName = indexName;
     }
 
@@ -73,7 +73,7 @@ public class ElasticSearchAction implements KrawlerAction {
      * Gets the hostname of the instance where ElasticSearch is running
      * @return the hostname of ElasticSearch
      */
-    public String getHostName() {
+    private String getHostName() {
         return hostName;
     }
 
@@ -81,7 +81,7 @@ public class ElasticSearchAction implements KrawlerAction {
      * Sets the hostname where the ElasticSearch instance is running. Default is 127.0.0.1 
      * @param hostName the hostname of ElasticSearch
      */
-    public void setHostName(String hostName) {
+    private void setHostName(String hostName) {
         this.hostName = hostName;
     }
 
@@ -89,7 +89,7 @@ public class ElasticSearchAction implements KrawlerAction {
      * Gets the port number the ElasticSearch is on
      * @return the port number of ElasticSearch
      */
-    public int getPort() {
+    private int getPort() {
         return port;
     }
 
@@ -97,7 +97,7 @@ public class ElasticSearchAction implements KrawlerAction {
      * Sets the port number the ElasticSearch is on. Default is 9300
      * @param port the port number of ElasticSearch
      */
-    public void setPort(int port) {
+    private void setPort(int port) {
         this.port = port;
     }
     
@@ -105,7 +105,7 @@ public class ElasticSearchAction implements KrawlerAction {
      * Gets the document type where the fetched pages are going to be indexed
      * @return the document type where the fetched pages are going to be indexed
      */
-    public String getDocumentType() {
+    private String getDocumentType() {
         return documentType;
     }
 
@@ -113,7 +113,7 @@ public class ElasticSearchAction implements KrawlerAction {
      * Sets the document type where the fetched pages are going to be indexed. Default is page
      * @param documentType the document type of the index
      */
-    public void setDocumentType(String documentType) {
+    private void setDocumentType(String documentType) {
         this.documentType = documentType;
     }
     
@@ -121,7 +121,7 @@ public class ElasticSearchAction implements KrawlerAction {
      * Sets whether to convert html to plain text when indexing into ElasticSearch
      * @return
      */
-    public void convertToPlainText(boolean toConvert) {
+    private void convertToPlainText(boolean toConvert) {
         this.convertToPlainText = toConvert;
     }
 
@@ -129,7 +129,7 @@ public class ElasticSearchAction implements KrawlerAction {
      * Get if to convert html to plain text when indexing into ElasticSearch
      * @return true or false
      */
-    public boolean isPlainText() {
+    private boolean isPlainText() {
         return this.convertToPlainText;
     }
 
