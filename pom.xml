@@ -48,7 +48,7 @@
         <mockito.version>1.9.5</mockito.version>
         <common.version>2.4</common.version>
         <super-csv.version>2.2.1</super-csv.version>
-        <es.version>1.4.2</es.version>
+        <es.version>1.5.0</es.version>
         <jest.version>0.1.4</jest.version>
     </properties>
 
@@ -68,6 +68,16 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.supercsv</groupId>
+            <artifactId>super-csv</artifactId>
+            <version>${super-csv.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch</artifactId>
+            <version>${es.version}</version>
         </dependency>
 
         <!-- Test Dependencies -->
@@ -96,14 +106,17 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>net.sf.supercsv</groupId>
-            <artifactId>super-csv</artifactId>
-            <version>${super-csv.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch</artifactId>
             <version>${es.version}</version>
+            <scope>test</scope>
+            <type>test-jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-all</artifactId>
+            <version>1.3</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

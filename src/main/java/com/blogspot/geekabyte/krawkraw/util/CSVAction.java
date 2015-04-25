@@ -69,8 +69,8 @@ public class CSVAction implements KrawlerAction {
         this.convertToPlainText = convertToPlainText;
     }
 
-    // access to the builder so as to prevent the client
-    // having to call its constructor
+    // Convenient access to the builder constructor, alternative to having to do a
+    // new CSVAction.Build() by the client
     public static Builder builder() {
         return new Builder();
     }

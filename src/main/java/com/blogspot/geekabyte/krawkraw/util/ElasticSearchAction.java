@@ -4,10 +4,6 @@ import com.blogspot.geekabyte.krawkraw.FetchedPage;
 import com.blogspot.geekabyte.krawkraw.interfaces.KrawlerAction;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.common.settings.ImmutableSettings;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,8 +13,8 @@ import java.io.IOException;
 import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 
 /**
- * Implementation of {@link com.blogspot.geekabyte.krawkraw.interfaces.KrawlerAction} that dumps crawled pages
- * to ElasticSearch.
+ * Implementation of {@link com.blogspot.geekabyte.krawkraw.interfaces.KrawlerAction} that inserts crawled pages
+ * to an ElasticSearch index.
  *  
  * Created by dadepo on 1/11/15.
  */
@@ -136,7 +132,7 @@ public class ElasticSearchAction implements KrawlerAction {
     private void setClient(Client client) {
         this.client = client;
     }
-    
+
     // access to the builder so as to prevent the client
     // having to call its constructor
     public static Builder builder() {
@@ -147,15 +143,26 @@ public class ElasticSearchAction implements KrawlerAction {
      * Builder for creating instances of {@link com.blogspot.geekabyte.krawkraw.util.ElasticSearchAction}
      */
     public static class Builder {
-        private ElasticSearchAction instance = new ElasticSearchAction();
+        private ElasticSearchAction elasticSearchAction = new ElasticSearchAction();
+
+
+        /**
+         * Use to set the {@link org.elasticsearch.client.Client} to use
+         * @param client the elastic search client
+         * @return the builder
+         */
+        public Builder setClient(Client client) {
+            elasticSearchAction.setClient(client);
+            return this;
+        }
 
         /**
          * Use to set the name of the elastic cluster the fetched page would be indexed in 
-         * @param name the name of the elastic cluster
+         * @param clusterName the name of the elastic cluster
          * @return the builder
          */
-        public Builder setClusterName(String name) {
-            instance.setClusterName(name);
+        public Builder setClusterName(String clusterName) {
+            elasticSearchAction.setClusterName(clusterName);
             return this;
         }
 
@@ -165,7 +172,7 @@ public class ElasticSearchAction implements KrawlerAction {
          * @return the builder
          */
         public Builder setIndexName(String indexName) {
-            instance.setIndexName(indexName);
+            elasticSearchAction.setIndexName(indexName);
             return this;
         }
 
@@ -175,7 +182,7 @@ public class ElasticSearchAction implements KrawlerAction {
          * @return the builder
          */
         public Builder setHost(String host) {
-            instance.setHostName(host);
+            elasticSearchAction.setHostName(host);
             return this;
         }
 
@@ -185,7 +192,7 @@ public class ElasticSearchAction implements KrawlerAction {
          * @return the builder
          */
         public Builder setPort(int portNumber) {
-            instance.setPort(portNumber);
+            elasticSearchAction.setPort(portNumber);
             return this;
         }
 
@@ -195,7 +202,7 @@ public class ElasticSearchAction implements KrawlerAction {
          * @return the builder
          */
         public Builder setDocumentType(String documentType) {
-            instance.setDocumentType(documentType);
+            elasticSearchAction.setDocumentType(documentType);
             return this;
         }
 
@@ -206,18 +213,12 @@ public class ElasticSearchAction implements KrawlerAction {
          * @return the builder
          */
         public Builder convertToPlainText(boolean convertToPlainText) {
-            instance.convertToPlainText(convertToPlainText);
+            elasticSearchAction.convertToPlainText(convertToPlainText);
             return this;
         }
 
         public ElasticSearchAction buildAction() {
-            Settings settings = ImmutableSettings.settingsBuilder()
-                                                 .put("cluster.name", instance.getClusterName()).build();
-            Client client =  new TransportClient(settings)
-                    .addTransportAddress(new InetSocketTransportAddress(instance.getHostName(), instance.getPort()
-                    ));
-            instance.setClient(client);
-            return instance;
+            return elasticSearchAction;
         }
     }
     
