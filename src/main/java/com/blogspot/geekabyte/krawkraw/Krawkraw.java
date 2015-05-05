@@ -40,7 +40,6 @@ public class Krawkraw {
 
     Logger logger = LoggerFactory.getLogger(Krawkraw.class);
 
-    private final String defaultCharset = "UTF-8";
     private String baseUrl;
     private ExecutorService executorService;
     private Map<String, Integer> retryLog = new HashMap<>();
@@ -50,6 +49,24 @@ public class Krawkraw {
     private List<String> referrals = new ArrayList<>();
     private KrawlerAction action;
     private KrawlerExitCallback krawlerExitCallback;
+    private Set<String> excludeURLs = new HashSet<>();
+
+
+    /**
+     * Gets the URLs to be excluded
+     * @return the URLs to be excluded
+     */
+    public Set<String> getExcludeURLs() {
+        return excludeURLs;
+    }
+
+    /**
+     * Sets the URLs to be excluded
+     * @param excludeURLs the url to be excluded
+     */
+    public void setExcludeURLs(Set<String> excludeURLs) {
+        this.excludeURLs = excludeURLs;
+    }
 
     /**
      * Gets the set delay between krawkraw requests
@@ -136,7 +153,7 @@ public class Krawkraw {
      * @throws java.lang.InterruptedException if any.
      * @throws java.net.URISyntaxException if any.
      */
-    public Set<String> doKrawl(String url, Set<String> excludeURLs)
+    private Set<String> doKrawl(String url, Set<String> excludeURLs)
             throws IOException, InterruptedException, URISyntaxException {
         setBaseUrl(url);
         return extractor(url, excludeURLs, new HashSet<String>(), "");
@@ -154,7 +171,7 @@ public class Krawkraw {
      */
     public Set<String> doKrawl(String url) throws IOException, InterruptedException, URISyntaxException {
         setBaseUrl(url);
-        return doKrawl(url, new HashSet<>());
+        return doKrawl(url, this.excludeURLs);
     }
 
 
@@ -179,7 +196,7 @@ public class Krawkraw {
      * @throws java.net.URISyntaxException if any.
      * @return {@link java.util.concurrent.Future} of a set of urls
      */
-    public Future<Set<String>> doKrawlAsync(String url, Set<String> excludeURLs)
+    private Future<Set<String>> doKrawlAsync(String url, Set<String> excludeURLs)
             throws IOException, InterruptedException, URISyntaxException {
         setBaseUrl(url);
         assert action != null;
@@ -209,7 +226,7 @@ public class Krawkraw {
      */
     public Future<Set<String>> doKrawlAsync(String url) throws IOException, InterruptedException, URISyntaxException {
         setBaseUrl(url);
-        return doKrawlAsync(url, new HashSet<>());
+        return doKrawlAsync(url, this.excludeURLs);
     }
 
     /**
