@@ -347,7 +347,6 @@ public class Krawkraw {
                 logger.error("Failed to crawl {}", url, e);
             }
         } else {
-            crawledURLs.add(url);
             return hrefs;
         }
         // second recursive break condition

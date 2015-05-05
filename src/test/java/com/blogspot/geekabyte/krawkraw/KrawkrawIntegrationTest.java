@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -52,6 +53,23 @@ public class KrawkrawIntegrationTest {
 
         assertEquals(hrefs.size(), 6);
         verify(mockAction, times(6)).execute(any(FetchedPage.class));
+    }
+
+    @Test
+    public void test_extractAllFromUrl_exclude_url() throws Exception {
+        KrawlerAction mockAction = mock(KrawlerAction.class);
+        Krawkraw krawkrawSUT = new Krawkraw(mockAction);
+        Set<String> urlToExclude = new HashSet<>();
+        urlToExclude.add("http://localhost:50036/mocksitetestexclude/three.html");
+        urlToExclude.add("http://localhost:50036/mocksitetestexclude/one.html");
+
+        krawkrawSUT.setDelay(0);
+        krawkrawSUT.setExcludeURLs(urlToExclude);
+        // System under test
+        Set<String> hrefs = krawkrawSUT.doKrawl(host + "/mocksitetestexclude/index.html");
+
+        assertEquals(hrefs.size(), 2);
+        verify(mockAction, times(2)).execute(any(FetchedPage.class));
     }
 
     @Test
