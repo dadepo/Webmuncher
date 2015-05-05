@@ -14,12 +14,10 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.util.Map;
-import java.util.Set;
 
 import static org.elasticsearch.index.query.QueryBuilders.matchAllQuery;
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 /**
  * Integration test for {@link com.blogspot.geekabyte.krawkraw.util.ElasticSearchAction}
@@ -76,7 +74,7 @@ public class ElasticSearchActionIntegrationTest {
         Krawkraw krawkrawSUT = new Krawkraw(esAction);
 
         // System under test
-        Set<String> urls = krawkrawSUT.doKrawl(HOST + "/mocksitecsvtest/index.html");
+        krawkrawSUT.doKrawl(HOST + "/mocksitecsvtest/index.html");
 
         SearchResponse searchResponse = client.prepareSearch(INDEX_NAME).setQuery(matchAllQuery())
                                   .execute()
