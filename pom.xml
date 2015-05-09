@@ -3,6 +3,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <groupId>com.blogspot.geekabyte.krawkraw</groupId>
+    <artifactId>krawler</artifactId>
+    <version>0.1.2-SNAPSHOT</version>
+
     <parent>
         <groupId>org.sonatype.oss</groupId>
         <artifactId>oss-parent</artifactId>
@@ -29,15 +33,11 @@
     </licenses>
 
     <scm>
-        <url>https://github.com/dadepo/jprowork</url>
+        <url>https://github.com/dadepo/krawkraw</url>
         <connection>scm:git:https://github.com/dadepo/Krawkraw.git</connection>
         <developerConnection>scm:git:https://github.com/dadepo/Krawkraw.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
-
-    <groupId>com.blogspot.geekabyte.krawkraw</groupId>
-    <artifactId>krawler</artifactId>
-    <version>0.1.2-SNAPSHOT</version>
 
     <properties>
         <jsoup.version>1.7.3</jsoup.version>
