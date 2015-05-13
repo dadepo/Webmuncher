@@ -1,39 +1,39 @@
-Krawkraw is a tool that can be used to easily retrieve all the contents of a website. More accurately contents under a 
+krwkrw is a tool that can be used to easily retrieve all the contents of a website. More accurately contents under a 
 single domain. This is its perfect use case which reflects the original need for which it was written: Read about more
-on that [here] (http://geekabyte.blogspot.be/2014/12/a-web-scrapercrawler-in-java-krawkraw.html)
+on that [here] (http://geekabyte.blogspot.be/2014/12/a-web-scrapercrawler-in-java-krwkrw.html)
 
-###How to use Krawkraw.
+###How to use krwkrw.
 
-`Krawkraw` is designed around the [Strategy Pattern] (http://en.wikipedia.org/wiki/Strategy_pattern). The main object that
-would be used is the `Krawkraw` object, while the client using `Krawkraw` would need to provide an implementation of the
-`KrawlerAction` interface which contains code that operates on every fetched page represented by the `FetchedPage` object
+`krwkrw` is designed around the [Strategy Pattern] (http://en.wikipedia.org/wiki/Strategy_pattern). The main object that
+would be used is the `krwkrw` object, while the client using `krwkrw` would need to provide an implementation of the
+`krwlerAction` interface which contains code that operates on every fetched page represented by the `FetchedPage` object
 
-The `KrawlerAction` interface has only one method that needs to be implemented. The `execute()` method. The `execute()`
+The `krwlerAction` interface has only one method that needs to be implemented. The `execute()` method. The `execute()`
 method is injected with a `FetchedPage` which contains the information extracted from every crawled pages. e.g, the HTML
-content of the page, the uri of the page, the title of the page, the time it took `Krawkraw` to retrieve the page etc.
+content of the page, the uri of the page, the title of the page, the time it took `krwkrw` to retrieve the page etc.
 
-`Krawkraw` is available via Maven central, and you can easily drop it into your project with this coordinates
+`krwkrw` is available via Maven central, and you can easily drop it into your project with this coordinates
 
 ```xml
 <dependency>
-<groupid>com.blogspot.geekabyte.krawkraw</groupid>
-<artifactid>krawler</artifactid>
-<version>${krawkraw.version}</version>
+<groupid>com.blogspot.geekabyte.krwkrw</groupid>
+<artifactid>krwler</artifactid>
+<version>${krwkrw.version}</version>
 </dependency>
 ```
 
 Or you can also build from source and have the built jar in your classpath.
 
-What a JPA backed `KrawlerAction` implementation may look like:
+What a JPA backed `krwlerAction` implementation may look like:
 
 ```
-class JpaAction implements KrawlerAction {
+class JpaAction implements krwlerAction {
 
         private EntityManager em;
         private EntityManagerFactory emf;
 
         /**
-         * Operates on given {@link com.blogspot.geekabyte.krawkraw.FetchedPage}
+         * Operates on given {@link com.blogspot.geekabyte.krwkrw.FetchedPage}
          *
          * @param page
          */
@@ -61,7 +61,7 @@ class JpaAction implements KrawlerAction {
 Or a pure JDBC implementation
 
 ```
-class JdbcAction implements KrawlerAction {
+class JdbcAction implements krwlerAction {
     public static final String JDBC_CONN_STRING = 
     "jdbc:mysql://localhost/pages?user=root";
     
@@ -95,53 +95,53 @@ class JdbcAction implements KrawlerAction {
 }
 ```
 
-Once you have the `KrawlerAction` implemented, you can proceed and use it with an instance of `Krawkraw` There are two
+Once you have the `krwlerAction` implemented, you can proceed and use it with an instance of `krwkrw` There are two
 call mode supported. A blocking synchronous call, and a non blocking asynchronous call.
 
-Using `KrawKraw` in synchronous call may look like this:
+Using `krwkrw` in synchronous call may look like this:
  
 ```
 // initiates a jdbc action
-JdbcAction krawlerAction = new JdbcAction();
-// creates an instance of krawkraw with an implementation of KrawlerAction
-Krawkraw krawkraw = new Krawkraw(krawlerAction);
+JdbcAction krwlerAction = new JdbcAction();
+// creates an instance of krwkrw with an implementation of krwlerAction
+krwkrw krwkrw = new krwkrw(krwlerAction);
         
-public Set<String> fetchPage(Krawkaw krawkraw) 
+public Set<String> fetchPage(krwkaw krwkrw) 
 				   throws IOException, InterruptedException {
                 
         // gets all the pages from www.example.com
-        return krawkraw.doKrawl("http://www.example.com");
+        return krwkrw.dokrwl("http://www.example.com");
 }
 ```
 
-Using `KrawKraw` in asynchronous call may look like this:
+Using `krwkrw` in asynchronous call may look like this:
  
 ```
 // initiates a jdbc action
-JdbcAction krawlerAction = new JdbcAction();
-// creates an instance of krawkraw with an implementation of KrawlerAction
-Krawkraw krawkraw = new Krawkraw(krawlerAction);
+JdbcAction krwlerAction = new JdbcAction();
+// creates an instance of krwkrw with an implementation of krwlerAction
+krwkrw krwkrw = new krwkrw(krwlerAction);
 
-public Future<Set<String>> doCrawAsync(Krawkaw krawkraw) 
+public Future<Set<String>> doCrawAsync(krwkaw krwkrw) 
                            throws IOException, InterruptedException {
-        // Initialize KrawKraw for Asynchronous call
+        // Initialize krwkrw for Asynchronous call
         //destroyAsync() should be called when Future is resolved
-        krawkraw.initializeAsync()
+        krwkrw.initializeAsync()
         
-        return krawkraw.doKrawlAsync("http://www.example.com");
+        return krwkrw.dokrwlAsync("http://www.example.com");
 }
 ```
-###Brief Overview of Krawkraw API.
+###Brief Overview of krwkrw API.
 
 | Modifier and Type  | Method and Description |
 | ------------- | ------------- |
-| void  | destroyAsync() Cleans up after Async call has been finished Should ideally be called after doKrawlAsync(String) or doKrawlAsync(String, java.util.Set)  |
-| Set<String>  | doKrawl(String url) Recursively Extracts all href starting from a given url The method is blocking. |
-| Set<String>  | doKrawl(String url, Set<String> excludeURLs) Recursively Extracts all href starting from a given url The method is blocking. |
-| Future<Set<String>>  | doKrawlAsync(String url) Recursively Extracts all href starting from a given url The method is non blocking as extraction operation is called in another thread. |
-| Future<Set<String>> | doKrawlAsync(String url) Recursively Extracts all href starting from a given url The method is non blocking as extraction operation is called in another thread. |
-| Future<Set<String>> | doKrawlAsync(String url, Set<String> excludeURLs) Recursively Extracts all href starting from a given url The method is non blocking as extraction operation is called in another thread. |
-| int | getDelay() Gets the set delay between krawkraw request. |
+| void  | destroyAsync() Cleans up after Async call has been finished Should ideally be called after dokrwlAsync(String) or dokrwlAsync(String, java.util.Set)  |
+| Set<String>  | dokrwl(String url) Recursively Extracts all href starting from a given url The method is blocking. |
+| Set<String>  | dokrwl(String url, Set<String> excludeURLs) Recursively Extracts all href starting from a given url The method is blocking. |
+| Future<Set<String>>  | dokrwlAsync(String url) Recursively Extracts all href starting from a given url The method is non blocking as extraction operation is called in another thread. |
+| Future<Set<String>> | dokrwlAsync(String url) Recursively Extracts all href starting from a given url The method is non blocking as extraction operation is called in another thread. |
+| Future<Set<String>> | dokrwlAsync(String url, Set<String> excludeURLs) Recursively Extracts all href starting from a given url The method is non blocking as extraction operation is called in another thread. |
+| int | getDelay() Gets the set delay between krwkrw request. |
 | List<String> | getReferrals() Returns the referrals that has been set. |
 | List<String> | getUserAgents() Returns the user agents that has been set. |
 | void | initializeAsync() Sets up for crawling in Async |
@@ -154,10 +154,10 @@ For more documentation, the accompanying Javadoc should be helpful. It can be go
 [Javadoc tool] (http://www.oracle.com/technetwork/articles/java/index-jsp-135444.html) or via Maven using the
 [Maven Javadoc plugin] (http://maven.apache.org/plugins/maven-javadoc-plugin/).
 
-Thanks to Javadoc.io, you can also access the most recent Javadoc [online](http://www.javadoc.io/doc/com.blogspot.geekabyte.krawkraw/krawler/)
+Thanks to Javadoc.io, you can also access the most recent Javadoc [online](http://www.javadoc.io/doc/com.blogspot.geekabyte.krwkrw/krwler/)
 
 ###Change log
 0.1.1
 
-1. Fix multiple crawl of 404 links https://github.com/dadepo/Krawkraw/issues/1
-2. Some JavaDoc enhancement https://github.com/dadepo/Krawkraw/issues/2
+1. Fix multiple crawl of 404 links https://github.com/dadepo/krwkrw/issues/1
+2. Some JavaDoc enhancement https://github.com/dadepo/krwkrw/issues/2

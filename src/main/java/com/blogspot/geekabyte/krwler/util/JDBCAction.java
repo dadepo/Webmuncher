@@ -1,7 +1,7 @@
-package com.blogspot.geekabyte.krawkraw.util;
+package com.blogspot.geekabyte.krwler.util;
 
-import com.blogspot.geekabyte.krawkraw.FetchedPage;
-import com.blogspot.geekabyte.krawkraw.interfaces.KrawlerAction;
+import com.blogspot.geekabyte.krwler.FetchedPage;
+import com.blogspot.geekabyte.krwler.interfaces.KrwlerAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,12 +14,12 @@ import java.sql.Statement;
 import javax.sql.DataSource;
 
 /**
- * Implementation of {@link com.blogspot.geekabyte.krawkraw.interfaces.KrawlerAction} that inserts crawled pages
+ * Implementation of {@link KrwlerAction} that inserts crawled pages
  * to an SQL database.
  *
  * @author Dadepo Aderemi.
  */
-public class JDBCAction implements KrawlerAction {
+public class JDBCAction implements KrwlerAction {
 
     Logger logger = LoggerFactory.getLogger(JDBCAction.class);
 
@@ -114,7 +114,7 @@ public class JDBCAction implements KrawlerAction {
     }
 
     /**
-     * Builder for creating instances of {@link com.blogspot.geekabyte.krawkraw.util.JDBCAction}
+     * Builder for creating instances of {@link com.blogspot.geekabyte.krwler.util.JDBCAction}
      */
     public static class Builder {
 
@@ -145,9 +145,9 @@ public class JDBCAction implements KrawlerAction {
         }
 
         /**
-         * Returns a properly configured instance of {@link com.blogspot.geekabyte.krawkraw.util.JDBCAction}
+         * Returns a properly configured instance of {@link com.blogspot.geekabyte.krwler.util.JDBCAction}
          *
-         * @return an instance of {@link com.blogspot.geekabyte.krawkraw.util.JDBCAction}
+         * @return an instance of {@link com.blogspot.geekabyte.krwler.util.JDBCAction}
          */
         public JDBCAction buildAction() {
             return jdbcAction;

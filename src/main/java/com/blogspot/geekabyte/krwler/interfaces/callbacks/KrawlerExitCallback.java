@@ -1,4 +1,4 @@
-package com.blogspot.geekabyte.krawkraw.interfaces.callbacks;
+package com.blogspot.geekabyte.krwler.interfaces.callbacks;
 
 import java.util.Set;
 

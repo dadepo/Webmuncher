@@ -1,6 +1,6 @@
-package com.blogspot.geekabyte.krawkraw;
+package com.blogspot.geekabyte.krwler;
 
-import com.blogspot.geekabyte.krawkraw.util.ElasticSearchAction;
+import com.blogspot.geekabyte.krwler.util.ElasticSearchAction;
 import org.apache.commons.io.FileUtils;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
@@ -20,7 +20,7 @@ import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 import static org.junit.Assert.*;
 
 /**
- * Integration test for {@link com.blogspot.geekabyte.krawkraw.util.ElasticSearchAction}
+ * Integration test for {@link com.blogspot.geekabyte.krwler.util.ElasticSearchAction}
  *
  * @author Dadepo Aderemi.
  */
@@ -28,7 +28,7 @@ public class ElasticSearchActionIntegrationTest {
 
     private static final String INDEX_NAME = "data";
     private static final String DOC_TYPE = "webpages";
-    private static final String CLUSTER_NAME = "krawkraw_test";
+    private static final String CLUSTER_NAME = "krwkrw_test";
     private final String HOST = "http://localhost:" + TestServer.HTTP_PORT;
 
     TestServer testServer;
@@ -71,10 +71,10 @@ public class ElasticSearchActionIntegrationTest {
                                                           .setHost("127.0.0.1")
                                                           .buildAction();
 
-        Krawkraw krawkrawSUT = new Krawkraw(esAction);
+        Krwkrw krwkrwSUT = new Krwkrw(esAction);
 
         // System under test
-        krawkrawSUT.doKrawl(HOST + "/mocksitecsvtest/index.html");
+        krwkrwSUT.doKrawl(HOST + "/mocksitecsvtest/index.html");
 
         SearchResponse searchResponse = client.prepareSearch(INDEX_NAME).setQuery(matchAllQuery())
                                   .execute()

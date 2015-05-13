@@ -1,7 +1,7 @@
-package com.blogspot.geekabyte.krawkraw;
+package com.blogspot.geekabyte.krwler;
 
-import com.blogspot.geekabyte.krawkraw.interfaces.KrawlerAction;
-import com.blogspot.geekabyte.krawkraw.interfaces.callbacks.KrawlerExitCallback;
+import com.blogspot.geekabyte.krwler.interfaces.KrwlerAction;
+import com.blogspot.geekabyte.krwler.interfaces.callbacks.KrawlerExitCallback;
 import org.jsoup.Jsoup;
 import org.jsoup.UnsupportedMimeTypeException;
 import org.jsoup.nodes.Document;
@@ -32,13 +32,13 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * <p>Krawkraw class.</p>
+ * <p>Krwkrw class.</p>
  *
  * @author Dadepo Aderemi.
  */
-public class Krawkraw {
+public class Krwkrw {
 
-    Logger logger = LoggerFactory.getLogger(Krawkraw.class);
+    Logger logger = LoggerFactory.getLogger(Krwkrw.class);
 
     private String baseUrl;
     private ExecutorService executorService;
@@ -47,7 +47,7 @@ public class Krawkraw {
     private int maxRetry = 0;
     private List<String> userAgents = new ArrayList<>();
     private List<String> referrals = new ArrayList<>();
-    private KrawlerAction action;
+    private KrwlerAction action;
     private KrawlerExitCallback krawlerExitCallback;
     private Set<String> excludeURLs = new HashSet<>();
 
@@ -69,7 +69,7 @@ public class Krawkraw {
     }
 
     /**
-     * Gets the set delay between krawkraw requests
+     * Gets the set delay between each requests
      *  
      * @return delay the set delay in milliseconds
      */
@@ -131,15 +131,15 @@ public class Krawkraw {
     }
 
     /**
-     * Public constructor for {@link com.blogspot.geekabyte.krawkraw.Krawkraw}
-     * takes an instance of {@link com.blogspot.geekabyte.krawkraw.interfaces.KrawlerAction} which
+     * Public constructor for {@link Krwkrw}
+     * takes an instance of {@link KrwlerAction} which
      * is used to operate on a fetched url
-     * represented by {@link com.blogspot.geekabyte.krawkraw.FetchedPage}
+     * represented by {@link com.blogspot.geekabyte.krwler.FetchedPage}
      *
-     * @param krawlerAction a {@link com.blogspot.geekabyte.krawkraw.interfaces.KrawlerAction} object.
+     * @param krwlerAction a {@link KrwlerAction} object.
      */
-    public Krawkraw(KrawlerAction krawlerAction) {
-        action = krawlerAction;
+    public Krwkrw(KrwlerAction krwlerAction) {
+        action = krwlerAction;
     }
 
     /**

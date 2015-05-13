@@ -1,7 +1,7 @@
-package com.blogspot.geekabyte.krawkraw.util;
+package com.blogspot.geekabyte.krwler.util;
 
-import com.blogspot.geekabyte.krawkraw.FetchedPage;
-import com.blogspot.geekabyte.krawkraw.interfaces.KrawlerAction;
+import com.blogspot.geekabyte.krwler.FetchedPage;
+import com.blogspot.geekabyte.krwler.interfaces.KrwlerAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.supercsv.cellprocessor.Optional;
@@ -24,12 +24,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Implementation of {@link com.blogspot.geekabyte.krawkraw.interfaces.KrawlerAction} that dumps crawled pages
+ * Implementation of {@link KrwlerAction} that dumps crawled pages
  * to a CSV file.
  * <p/>
  * Created by dadepo on 1/8/15.
  */
-public class CSVAction implements KrawlerAction {
+public class CSVAction implements KrwlerAction {
 
     Logger logger = LoggerFactory.getLogger(CSVAction.class);
 
@@ -76,7 +76,7 @@ public class CSVAction implements KrawlerAction {
     }
 
     /**
-     * Builder for creating instances of {@link com.blogspot.geekabyte.krawkraw.util.CSVAction}
+     * Builder for creating instances of {@link com.blogspot.geekabyte.krwler.util.CSVAction}
      */
     public static class Builder {
 
@@ -97,9 +97,9 @@ public class CSVAction implements KrawlerAction {
         /**
          * Sets the format used for writing the CSV file
          *
-         * @param format the format expressed as a {@link com.blogspot.geekabyte.krawkraw.util.CSVAction.CSVFORMAT}
+         * @param format the format expressed as a {@link com.blogspot.geekabyte.krwler.util.CSVAction.CSVFORMAT}
          *               if none is configured the
-         *               default is {@link com.blogspot.geekabyte.krawkraw.util.CSVAction.CSVFORMAT#DEFAULT}
+         *               default is {@link com.blogspot.geekabyte.krwler.util.CSVAction.CSVFORMAT#DEFAULT}
          * @return the builder
          */
         public Builder setCSVFormat(CSVFORMAT format) {
@@ -120,9 +120,9 @@ public class CSVAction implements KrawlerAction {
         }
 
         /**
-         * Returns a properly configured instance of {@link com.blogspot.geekabyte.krawkraw.util.CSVAction}
+         * Returns a properly configured instance of {@link com.blogspot.geekabyte.krwler.util.CSVAction}
          *
-         * @return an instance of {@link com.blogspot.geekabyte.krawkraw.util.CSVAction}
+         * @return an instance of {@link com.blogspot.geekabyte.krwler.util.CSVAction}
          */
         public CSVAction buildAction() {
             return instance;

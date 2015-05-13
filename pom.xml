@@ -3,8 +3,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.blogspot.geekabyte.krawkraw</groupId>
-    <artifactId>krawler</artifactId>
+    <groupId>com.blogspot.geekabyte.krwkrw</groupId>
+    <artifactId>krwler</artifactId>
     <version>0.1.2-SNAPSHOT</version>
 
     <parent>
@@ -13,9 +13,9 @@
         <version>7</version>
     </parent>
 
-    <name>Krawkraw</name>
+    <name>Krwkrw</name>
     <description>A general purpose web crawler written in Java</description>
-    <url>https://github.com/dadepo/Krawkraw</url>
+    <url>https://github.com/dadepo/Krwkrw</url>
 
     <developers>
         <developer>
@@ -33,9 +33,9 @@
     </licenses>
 
     <scm>
-        <url>https://github.com/dadepo/krawkraw</url>
-        <connection>scm:git:https://github.com/dadepo/Krawkraw.git</connection>
-        <developerConnection>scm:git:https://github.com/dadepo/Krawkraw.git</developerConnection>
+        <url>https://github.com/dadepo/Krwkrw</url>
+        <connection>scm:git:https://github.com/dadepo/Krwkrw.git</connection>
+        <developerConnection>scm:git:https://github.com/dadepo/Krwkrw.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 

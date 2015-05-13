@@ -1,6 +1,6 @@
-package com.blogspot.geekabyte.krawkraw;
+package com.blogspot.geekabyte.krwler;
 
-import com.blogspot.geekabyte.krawkraw.util.JDBCAction;
+import com.blogspot.geekabyte.krwler.util.JDBCAction;
 import org.h2.jdbcx.JdbcDataSource;
 import org.junit.*;
 
@@ -12,7 +12,7 @@ import java.util.Map;
 import static org.junit.Assert.*;
 
 /**
- * Integration test for {@link com.blogspot.geekabyte.krawkraw.util.JDBCAction}
+ * Integration test for {@link com.blogspot.geekabyte.krwler.util.JDBCAction}
  *
  * @author Dadepo Aderemi.
  */
@@ -62,10 +62,10 @@ public class JDBCActionTest {
         expected.put(2,secondRow);
 
 
-        Krawkraw krawkrawSUT = new Krawkraw(jdbcAction);
+        Krwkrw krwkrwSUT = new Krwkrw(jdbcAction);
 
         // System under test
-        krawkrawSUT.doKrawl(HOST + "/mocksitecsvtest/index.html");
+        krwkrwSUT.doKrawl(HOST + "/mocksitecsvtest/index.html");
 
 
         Statement statement = dataSource.getConnection().createStatement();

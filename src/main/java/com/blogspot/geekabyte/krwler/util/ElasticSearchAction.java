@@ -1,7 +1,7 @@
-package com.blogspot.geekabyte.krawkraw.util;
+package com.blogspot.geekabyte.krwler.util;
 
-import com.blogspot.geekabyte.krawkraw.FetchedPage;
-import com.blogspot.geekabyte.krawkraw.interfaces.KrawlerAction;
+import com.blogspot.geekabyte.krwler.FetchedPage;
+import com.blogspot.geekabyte.krwler.interfaces.KrwlerAction;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Client;
 import org.jsoup.Jsoup;
@@ -13,12 +13,12 @@ import java.io.IOException;
 import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 
 /**
- * Implementation of {@link com.blogspot.geekabyte.krawkraw.interfaces.KrawlerAction} that inserts crawled pages
+ * Implementation of {@link KrwlerAction} that inserts crawled pages
  * to an ElasticSearch index.
  *  
  * Created by dadepo on 1/11/15.
  */
-public class ElasticSearchAction implements KrawlerAction {
+public class ElasticSearchAction implements KrwlerAction {
     
     private Logger logger = LoggerFactory.getLogger(ElasticSearchAction.class);
     private String clusterName = "elasticsearch";
@@ -140,7 +140,7 @@ public class ElasticSearchAction implements KrawlerAction {
     }
 
     /**
-     * Builder for creating instances of {@link com.blogspot.geekabyte.krawkraw.util.ElasticSearchAction}
+     * Builder for creating instances of {@link com.blogspot.geekabyte.krwler.util.ElasticSearchAction}
      */
     public static class Builder {
         private ElasticSearchAction elasticSearchAction = new ElasticSearchAction();

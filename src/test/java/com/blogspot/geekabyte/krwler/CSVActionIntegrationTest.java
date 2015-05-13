@@ -1,6 +1,6 @@
-package com.blogspot.geekabyte.krawkraw;
+package com.blogspot.geekabyte.krwler;
 
-import com.blogspot.geekabyte.krawkraw.util.CSVAction;
+import com.blogspot.geekabyte.krwler.util.CSVAction;
 import org.junit.*;
 import org.supercsv.io.CsvMapReader;
 import org.supercsv.io.ICsvMapReader;
@@ -45,9 +45,9 @@ public class CSVActionIntegrationTest {
                                        .setCSVFormat(CSVAction.CSVFORMAT.EXCEL)
                                        .buildAction();
 
-        Krawkraw krawkrawSUT = new Krawkraw(csvAction);
+        Krwkrw krwkrwSUT = new Krwkrw(csvAction);
         // System under test
-        Set<String> urls = krawkrawSUT.doKrawl(HOST + "/mocksitecsvtest/index.html");
+        Set<String> urls = krwkrwSUT.doKrawl(HOST + "/mocksitecsvtest/index.html");
 
         List<Map<String, String>> maps = readCSV(csvAction.getDestination().toString());
         assertEquals(maps.size(), 2);
