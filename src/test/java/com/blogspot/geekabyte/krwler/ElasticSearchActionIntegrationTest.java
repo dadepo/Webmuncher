@@ -74,7 +74,7 @@ public class ElasticSearchActionIntegrationTest {
         Krwkrw krwkrwSUT = new Krwkrw(esAction);
 
         // System under test
-        krwkrwSUT.doKrawl(HOST + "/mocksitecsvtest/index.html");
+        krwkrwSUT.crawl(HOST + "/mocksitecsvtest/index.html");
 
         SearchResponse searchResponse = client.prepareSearch(INDEX_NAME).setQuery(matchAllQuery())
                                   .execute()

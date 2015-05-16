@@ -69,7 +69,7 @@ public class JDBCActionTest {
         Krwkrw krwkrwSUT = new Krwkrw(jdbcAction);
 
         // System under test
-        krwkrwSUT.doKrawl(HOST + "/mocksitecsvtest/index.html");
+        krwkrwSUT.crawl(HOST + "/mocksitecsvtest/index.html");
 
 
         Statement statement = dataSource.getConnection().createStatement();
@@ -98,7 +98,7 @@ public class JDBCActionTest {
 
         Krwkrw krwkrwSUT = new Krwkrw(jdbcAction);
         // System under test
-        krwkrwSUT.doKrawl(HOST + "/mocksitecsvtest/index.html");
+        krwkrwSUT.crawl(HOST + "/mocksitecsvtest/index.html");
     }
 
 }

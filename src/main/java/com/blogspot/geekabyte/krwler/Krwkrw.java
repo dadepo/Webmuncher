@@ -153,7 +153,7 @@ public class Krwkrw {
      * @throws java.lang.InterruptedException if any.
      * @throws java.net.URISyntaxException if any.
      */
-    private Set<String> doKrawl(String url, Set<String> excludeURLs)
+    private Set<String> doCrawl(String url, Set<String> excludeURLs)
             throws IOException, InterruptedException, URISyntaxException {
         setBaseUrl(url);
         return extractor(url, excludeURLs, new HashSet<String>(), "");
@@ -169,9 +169,9 @@ public class Krwkrw {
      * @throws java.lang.InterruptedException if any.
      * @throws java.net.URISyntaxException if any.
      */
-    public Set<String> doKrawl(String url) throws IOException, InterruptedException, URISyntaxException {
+    public Set<String> crawl(String url) throws IOException, InterruptedException, URISyntaxException {
         setBaseUrl(url);
-        return doKrawl(url, this.excludeURLs);
+        return doCrawl(url, this.excludeURLs);
     }
 
 
@@ -196,7 +196,7 @@ public class Krwkrw {
      * @throws java.net.URISyntaxException if any.
      * @return {@link java.util.concurrent.Future} of a set of urls
      */
-    private Future<Set<String>> doKrawlAsync(String url, Set<String> excludeURLs)
+    private Future<Set<String>> doCrawlAsync(String url, Set<String> excludeURLs)
             throws IOException, InterruptedException, URISyntaxException {
         setBaseUrl(url);
         assert action != null;
@@ -224,9 +224,9 @@ public class Krwkrw {
      * @throws java.net.URISyntaxException if any.
      * @return {@link java.util.concurrent.Future} of a set of urls
      */
-    public Future<Set<String>> doKrawlAsync(String url) throws IOException, InterruptedException, URISyntaxException {
+    public Future<Set<String>> crawlAsync(String url) throws IOException, InterruptedException, URISyntaxException {
         setBaseUrl(url);
-        return doKrawlAsync(url, this.excludeURLs);
+        return doCrawlAsync(url, this.excludeURLs);
     }
 
     /**
@@ -428,7 +428,7 @@ public class Krwkrw {
 
     /**
      * Cleans up after Async call has been finished
-     * Should ideally be called after {@link #doKrawlAsync(String)} or {@link #doKrawlAsync(String, java.util.Set)}
+     * Should ideally be called after {@link #crawlAsync(String)} or {@link #doCrawlAsync(String, java.util.Set)}
      */
     private void destroyAsync() {
         if (executorService != null) {

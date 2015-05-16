@@ -39,7 +39,7 @@ public class KrwkrwIntegrationTest {
 
         krwkrwSUT.setDelay(0);
         // System under test
-        Set<String> hrefs = krwkrwSUT.doKrawl(host + "/mocksite/index.html");
+        Set<String> hrefs = krwkrwSUT.crawl(host + "/mocksite/index.html");
 
         assertEquals(hrefs.size(), 6);
         verify(mockAction, times(6)).execute(any(FetchedPage.class));
@@ -56,7 +56,7 @@ public class KrwkrwIntegrationTest {
         krwkrwSUT.setDelay(0);
         krwkrwSUT.setExcludeURLs(urlToExclude);
         // System under test
-        Set<String> hrefs = krwkrwSUT.doKrawl(host + "/mocksitetestexclude/index.html");
+        Set<String> hrefs = krwkrwSUT.crawl(host + "/mocksitetestexclude/index.html");
 
         assertEquals(hrefs.size(), 2);
         verify(mockAction, times(2)).execute(any(FetchedPage.class));
@@ -69,7 +69,7 @@ public class KrwkrwIntegrationTest {
 
         krwkrwSUT.setDelay(0);
         // System under test
-        Future<Set<String>> futureHrefs = krwkrwSUT.doKrawlAsync(host + "/mocksite/index.html");
+        Future<Set<String>> futureHrefs = krwkrwSUT.crawlAsync(host + "/mocksite/index.html");
 
         Set<String> hrefs = futureHrefs.get();
 
@@ -87,7 +87,7 @@ public class KrwkrwIntegrationTest {
         krwkrwSUT.onExit(mockCallBack);
         krwkrwSUT.setDelay(0);
         // System under test
-        Future<Set<String>> futureHrefs = krwkrwSUT.doKrawlAsync(host + "/mocksite/index.html");
+        Future<Set<String>> futureHrefs = krwkrwSUT.crawlAsync(host + "/mocksite/index.html");
 
         Set<String> hrefs = futureHrefs.get();
 
@@ -104,7 +104,7 @@ public class KrwkrwIntegrationTest {
 
         krwkrwSUT.setDelay(0);
         // System under test
-        Set<String> hrefs = krwkrwSUT.doKrawl(host + "/brokenlink/index.html");
+        Set<String> hrefs = krwkrwSUT.crawl(host + "/brokenlink/index.html");
 
         ArgumentCaptor<FetchedPage> captor = ArgumentCaptor.forClass(FetchedPage.class);
         assertEquals(hrefs.size(), 5);

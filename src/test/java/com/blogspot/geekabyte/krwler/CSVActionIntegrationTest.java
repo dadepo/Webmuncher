@@ -48,7 +48,7 @@ public class CSVActionIntegrationTest {
 
         Krwkrw krwkrwSUT = new Krwkrw(csvAction);
         // System under test
-        Set<String> urls = krwkrwSUT.doKrawl(HOST + "/mocksitecsvtest/index.html");
+        Set<String> urls = krwkrwSUT.crawl(HOST + "/mocksitecsvtest/index.html");
 
         List<Map<String, String>> maps = readCSV(csvAction.getDestination().toString());
         assertEquals(maps.size(), 2);
@@ -70,7 +70,7 @@ public class CSVActionIntegrationTest {
 
         Krwkrw krwkrwSUT = new Krwkrw(csvAction);
         // System under test
-        Set<String> urls = krwkrwSUT.doKrawl(HOST + "/mocksitecsvtest/index.html");
+        Set<String> urls = krwkrwSUT.crawl(HOST + "/mocksitecsvtest/index.html");
     }
 
     //==================================================== Helpers ====================================================
