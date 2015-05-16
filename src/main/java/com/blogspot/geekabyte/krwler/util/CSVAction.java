@@ -1,6 +1,7 @@
 package com.blogspot.geekabyte.krwler.util;
 
 import com.blogspot.geekabyte.krwler.FetchedPage;
+import com.blogspot.geekabyte.krwler.exceptions.FatalError;
 import com.blogspot.geekabyte.krwler.interfaces.KrwlerAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -146,7 +147,8 @@ public class CSVAction implements KrwlerAction {
                 doWrite(page);
             }
         } catch (Exception e) {
-            logger.debug("Exception while writing CSV file", e);
+            logger.info("Exception while writing CSV file", e);
+            throw new FatalError("CSV file can not be created.");
         } finally {
             if (mapWriter != null) {
                 try {

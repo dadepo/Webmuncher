@@ -1,5 +1,6 @@
 package com.blogspot.geekabyte.krwler;
 
+import com.blogspot.geekabyte.krwler.exceptions.FatalError;
 import com.blogspot.geekabyte.krwler.util.CSVAction;
 import org.junit.*;
 import org.supercsv.io.CsvMapReader;
@@ -59,6 +60,18 @@ public class CSVActionIntegrationTest {
         Files.deleteIfExists(csvAction.getDestination());
     }
 
+    @Test(expected = FatalError.class)
+    public void testDefaultCSVUtil_File_Cannot_Be_Created() throws Exception {
+
+        CSVAction csvAction = CSVAction.builder()
+                .setDestination(Paths.get("_/xyz123_~`/out.csv"))
+                .setCSVFormat(CSVAction.CSVFORMAT.EXCEL)
+                .buildAction();
+
+        Krwkrw krwkrwSUT = new Krwkrw(csvAction);
+        // System under test
+        Set<String> urls = krwkrwSUT.doKrawl(HOST + "/mocksitecsvtest/index.html");
+    }
 
     //==================================================== Helpers ====================================================
 
