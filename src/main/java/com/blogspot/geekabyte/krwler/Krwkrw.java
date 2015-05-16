@@ -106,7 +106,7 @@ public class Krwkrw {
      * user agents would be selected randomly for each page request. The default is
      * Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6")
      *
-     * @param userAgents
+     * @param userAgents the user agents to use for the crawl requests
      */
     public void setUserAgents(List<String> userAgents) {
         this.userAgents = userAgents;
