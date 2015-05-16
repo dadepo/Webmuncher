@@ -41,16 +41,18 @@ The included utility actions are:
 2. *ElasticSearchAction* - for indexing web pages into ElasticSearch. _(since 0.1.2)_
 3. *CSVAction* - for saving web pages into a CSV file. _(since 0.1.2)_
 
-For example to use `Krwkrw` to extract all the contents of `http://www.example.com` into a CSV file, you do:
+For example, to use `Krwkrw` to extract all the contents of `http://www.example.com` into a CSV file, you do:
 
 ```java
 
-CSVAction action = CSVAction.builder()
+    // Use the builder to build the CSVAction
+    CSVAction action = CSVAction.builder()
                 .convertToPlainText(true) // converts HTML to plain text
                 .setDestination(Paths.get("example-com.csv"))
                 .buildAction();
 
-    Krwkrw crawler = new Krwkrw(action); // creates an instance of the crawler with the action
+    // creates an instance of the crawler with the action
+    Krwkrw crawler = new Krwkrw(action);
 
     // Configure the crawler to your hearts desire
 
