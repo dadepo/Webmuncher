@@ -4,7 +4,7 @@
 
     <groupId>com.blogspot.geekabyte.krwkrw</groupId>
     <artifactId>krwler</artifactId>
-    <version>0.1.2-SNAPSHOT</version>
+    <version>0.1.2</version>
 
     <parent>
         <groupId>org.sonatype.oss</groupId>
@@ -35,7 +35,7 @@
         <url>https://github.com/dadepo/Krwkrw</url>
         <connection>scm:git:https://github.com/dadepo/Krwkrw.git</connection>
         <developerConnection>scm:git:https://github.com/dadepo/Krwkrw.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>krwler-0.1.2</tag>
     </scm>
 
     <properties>
