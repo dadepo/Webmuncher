@@ -54,7 +54,7 @@ public class CSVAction implements KrwlerAction {
     }
 
     private void setDestination(Path destination) {
-        this.destination = Paths.get(LocalDateTime.now() + "_" + destination.toString());
+        this.destination = Paths.get(destination.toString());
     }
 
     private void setCSVFormat(CSVFORMAT format) {
