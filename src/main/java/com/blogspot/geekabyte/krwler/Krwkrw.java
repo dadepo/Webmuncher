@@ -2,6 +2,7 @@ package com.blogspot.geekabyte.krwler;
 
 import com.blogspot.geekabyte.krwler.interfaces.KrwlerAction;
 import com.blogspot.geekabyte.krwler.interfaces.callbacks.KrawlerExitCallback;
+import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.UnsupportedMimeTypeException;
 import org.jsoup.nodes.Document;
@@ -344,7 +345,8 @@ public class Krwkrw {
                 fetchedPage.setUrl(url);
                 fetchedPage.setSourceUrl(sourceUrl);
                 action.execute(fetchedPage);
-                logger.error("Failed to crawl {}", url, e);
+                logger.error("Failed to crawl {}. Results into a status code {}",
+                        url, ((HttpStatusException)e).getStatusCode());
             }
         } else {
             return hrefs;
