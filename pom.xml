@@ -4,7 +4,7 @@
 
     <groupId>com.blogspot.geekabyte.krwkrw</groupId>
     <artifactId>krwler</artifactId>
-    <version>0.1.3-SNAPSHOT</version>
+    <version>0.1.2-SNAPSHOT</version>
 
     <parent>
         <groupId>org.sonatype.oss</groupId>
