@@ -45,35 +45,48 @@ For example to use `Krwkrw` to extract all the contents of `http://www.example.c
 
 ```java
 
-    CSVAction action = CSVAction.builder()
+CSVAction action = CSVAction.builder()
                 .convertToPlainText(true) // converts HTML to plain text
                 .setDestination(Paths.get("example-com.csv"))
                 .buildAction();
 
-        Krwkrw crawler = new Krwkrw(action); // creates an instance of the crawler with the action
+    Krwkrw crawler = new Krwkrw(action); // creates an instance of the crawler with the action
 
-        // Configure the crawler to your hearts desire
-        crawler.setDelay(20); // Crawler will wait 20 seconds between each requests
-        crawler.setMaxRetry(3) // When at first you don't succeed? Give up and move onto the next one, after 3 attempts!
+    // Configure the crawler to your hearts desire
 
-        // the crawler would select randomly from the list of user agents you give for each request
-        crawler.setUserAgents(Arrays.asList(
-                                "Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6",
-                                "Opera/9.80 (X11; Linux i686; Ubuntu/14.10) Presto/2.12.388 Version/12.16")
-                        );
+    // Crawler will wait 20 seconds between each requests
+    crawler.setDelay(20);
+    // When at first you don't succeed?
+    // Give up and move onto the next one, after 3 attempts!
+    crawler.setMaxRetry(3)
 
-        // Provide the list of addresses to use for the referral. So the folks at example.com when checking
-        // the webserver logs:sometimes the request comes from google, sometimes, yahoo, sometimes bing...
-        crawler.setReferrals(Arrays.asList("http://www.google.com","http://www.yahoo.com", "http://www.bing.com"));
+    // the crawler would select randomly from the list of user agents
+    // you give for each request
+    crawler.setUserAgents(Arrays.asList(
+      "Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6)...",
+      "Opera/9.80 (X11; Linux i686; Ubuntu/14.10)...")
+    );
+
+    // Provide the list of addresses to use for the referral. So the folks at
+    // example.com when checking the webserver logs:sometimes the request
+    // comes from google, sometimes, yahoo, sometimes bing...
+    crawler.setReferrals(Arrays.asList(
+                    "http://www.google.com",
+                    "http://www.yahoo.com",
+                    "http://www.bing.com"));
 
         // Start the crawling operation as a blocking call.
         Set<String> strings = crawler.doKrawl("http://www.example.com");
 
-        // If you want to execute the crawling in another thread, so the current thread does not block, then do:
+        // If you want to execute the crawling in another thread,
+        // so the current thread does not block, then do:
         Set<String> strings = crawler.doKrawlAsync("http://www.example.com");
 
-        // in case you do the crawling in another thread, you most likely want to be notified when the crawling operations
-        // terminates. in such a case, you should use crawler.onExit(KrwlerExitCallback callback) to register the callback
+        // in case you do the crawling in another thread,
+        // you most likely want to be notified when the
+        // crawling operations terminates. in such a case,
+        // you should use crawler.onExit(KrwlerExitCallback callback)
+        // to register the callback
 ```
 
 The above steps makes use of the `CSVAction` that comes with the library. In case you have custom operations you want
@@ -111,7 +124,7 @@ class CustomJpaAction implements krwlerAction {
             em.getTransaction().commit();
         }
 }
-
+```
 
 ###Overview of krwkrw API.
 
@@ -122,6 +135,7 @@ The accompanying Javadoc should be helpful in having an overview of the API. It 
 More conveniently, thanks to [Javadoc.io](http://www.javadoc.io), you can also access the most recent Javadoc [online](http://www.javadoc.io/doc/com.blogspot.geekabyte.krwkrw/krwler/)
 
 The API for the older version: (Krakraw) can be find online [here](http://www.javadoc.io/doc/com.blogspot.geekabyte.krawkraw/krawler/)
+
 
 ### Licenses
 [The MIT License (MIT)] (http://www.opensource.org/licenses/mit-license.php)
