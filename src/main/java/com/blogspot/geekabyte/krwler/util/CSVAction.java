@@ -27,8 +27,8 @@ import java.util.Map;
 /**
  * Implementation of {@link KrwlerAction} that dumps crawled pages
  * to a CSV file.
- * <p/>
- * Created by dadepo on 1/8/15.
+ *
+ * @author Dadepo Aderemi
  */
 public class CSVAction implements KrwlerAction {
 

@@ -15,8 +15,8 @@ import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 /**
  * Implementation of {@link KrwlerAction} that inserts crawled pages
  * to an ElasticSearch index.
- *  
- * Created by dadepo on 1/11/15.
+ *
+ * @author Dadepo Aderemi.
  */
 public class ElasticSearchAction implements KrwlerAction {
     
