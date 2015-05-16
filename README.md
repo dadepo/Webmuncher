@@ -58,6 +58,7 @@ For example, to use `Krwkrw` to extract all the contents of `http://www.example.
 
     // Crawler will wait 20 seconds between each requests
     crawler.setDelay(20);
+    
     // When at first you don't succeed?
     // Give up and move onto the next one, after 3 attempts!
     crawler.setMaxRetry(3)
