@@ -156,6 +156,9 @@ For more documentation, the accompanying Javadoc should be helpful. It can be go
 
 Thanks to Javadoc.io, you can also access the most recent Javadoc [online](http://www.javadoc.io/doc/com.blogspot.geekabyte.krwkrw/krwler/)
 
+### Licenses
+[The MIT License (MIT)] (http://www.opensource.org/licenses/mit-license.php)
+
 ###Change log
 0.1.1
 
