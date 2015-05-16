@@ -1,6 +1,6 @@
 `krwkrw (formally Krawkraw)` is a tool that can be used to easily retrieve all the contents of a website. More
 accurately, contents under a single domain. This is the perfect use case which reflects the original need for
-which it was created: Read about more on that [here] (http://geekabyte.blogspot.be/2014/12/a-web-scrapercrawler-in-java-krwkrw.html)
+which it was created: Read more about that [here] (http://geekabyte.blogspot.be/2014/12/a-web-scrapercrawler-in-java-krwkrw.html)
 
 `krwkrw` is available via Maven central, and you can easily drop it into your project with this coordinates:
 
@@ -58,7 +58,7 @@ For example, to use `Krwkrw` to extract all the contents of `http://www.example.
 
     // Crawler will wait 20 seconds between each requests
     crawler.setDelay(20);
-    
+
     // When at first you don't succeed?
     // Give up and move onto the next one, after 3 attempts!
     crawler.setMaxRetry(3)
