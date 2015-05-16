@@ -1,6 +1,7 @@
 package com.blogspot.geekabyte.krwler.util;
 
 import com.blogspot.geekabyte.krwler.FetchedPage;
+import com.blogspot.geekabyte.krwler.exceptions.FatalError;
 import com.blogspot.geekabyte.krwler.interfaces.KrwlerAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,7 @@ public class JDBCAction implements KrwlerAction {
     private String tableName = "krawled_webpages";
     private DataSource dataSource;
 
+    // prevents direct instantiation
     private JDBCAction() {
     }
 
@@ -48,10 +50,12 @@ public class JDBCAction implements KrwlerAction {
     @Override
     public void execute(FetchedPage page) {
         if (dataSource == null) {
-            logger.error("Cannot save crawled page. A database datasource was not set. Make sure you call "
-                                 + "setDataSource on builder");
-        }
+            String msg = "Cannot save crawled pages. A database datasource was not set. Make sure you call "
+                    + "setDataSource on builder";
 
+            logger.error(msg);
+            throw new FatalError(msg);
+        }
 
         try(Connection connection = dataSource.getConnection()) {
             createTableIfNotExist(connection);
@@ -80,37 +84,26 @@ public class JDBCAction implements KrwlerAction {
     private void createTableIfNotExist(Connection connection) {
         try {
             Statement statement = connection.createStatement();
-            String createTableSql = "CREATE TABLE {TABLE_NAME} " +
-                    "(title TEXT, " +
-                    " url TEXT, " +
-                    " source_url TEXT, " +
-                    " html TEXT, " +
-                    " status TEXT, " +
-                    " load_time TEXT)";
+            String createTableSql = "CREATE TABLE IF NOT EXISTS {TABLE_NAME} " +
+                    "(title MEDIUMTEXT, " +
+                    " url MEDIUMTEXT, " +
+                    " source_url MEDIUMTEXT, " +
+                    " html MEDIUMTEXT, " +
+                    " status MEDIUMTEXT, " +
+                    " load_time MEDIUMTEXT)";
 
             createTableSql = createTableSql.replace("{TABLE_NAME}", tableName);
-
-            if (!isTableExist(connection, tableName)) {
-                statement.execute(createTableSql);
-            }
+            statement.execute(createTableSql);
 
         } catch (SQLException e) {
             logger.error("Error creating statement from connection", e);
         }
     }
 
-    private Boolean isTableExist(Connection connection, String tableName) {
-        DatabaseMetaData databaseMetadata = null;
-        try {
-            databaseMetadata = connection.getMetaData();
-            ResultSet rs = databaseMetadata.getTables(null, null, tableName.toUpperCase(), null);
-            if (rs.next()) {
-                return true;
-            }
-        } catch (SQLException e) {
-            logger.error("Error getting metadata information", e);
-        }
-        return false;
+    // Convenient access to the builder constructor, alternative to having to do a
+    // new JDBCAction.Build() by the client
+    public static Builder builder() {
+        return new Builder();
     }
 
     /**
@@ -127,7 +120,7 @@ public class JDBCAction implements KrwlerAction {
          * @param tableName the table name
          * @return the builder
          */
-        public Builder setDestination(String tableName) {
+        public Builder setTableName(String tableName) {
             jdbcAction.setTableName(tableName);
             return this;
         }

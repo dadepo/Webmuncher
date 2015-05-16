@@ -1,5 +1,6 @@
 package com.blogspot.geekabyte.krwler;
 
+import com.blogspot.geekabyte.krwler.exceptions.FatalError;
 import com.blogspot.geekabyte.krwler.util.JDBCAction;
 import org.h2.jdbcx.JdbcDataSource;
 import org.junit.*;
@@ -42,8 +43,11 @@ public class JDBCActionTest {
 
     @Test
     public void testJdbcAction() throws Exception {
-        JDBCAction.Builder builder = new JDBCAction.Builder();
-        JDBCAction jdbcAction = builder.setDataSource(dataSource).setDestination("pages").buildAction();
+
+        JDBCAction jdbcAction = JDBCAction.builder()
+                .setDataSource(dataSource)
+                .setTableName("pages")
+                .buildAction();
 
         Map<Integer, Map<String, String>> expected = new HashMap<>();
         Map<String, String> firstRow = new HashMap<>();
@@ -83,4 +87,18 @@ public class JDBCActionTest {
         }
 
     }
+
+    @Test(expected = FatalError.class)
+    public void testJdbcAction_no_dataSource() throws Exception {
+
+        JDBCAction jdbcAction = JDBCAction.builder()
+                .setDataSource(null)
+                .setTableName("pages")
+                .buildAction();
+
+        Krwkrw krwkrwSUT = new Krwkrw(jdbcAction);
+        // System under test
+        krwkrwSUT.doKrawl(HOST + "/mocksitecsvtest/index.html");
+    }
+
 }
