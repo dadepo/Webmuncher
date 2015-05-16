@@ -345,8 +345,7 @@ public class Krwkrw {
                 fetchedPage.setUrl(url);
                 fetchedPage.setSourceUrl(sourceUrl);
                 action.execute(fetchedPage);
-                logger.error("Failed to crawl {}. Results into a status code {}",
-                        url, ((HttpStatusException)e).getStatusCode());
+                logger.error("Failed to crawl {}. With error message: {}", url, e.getLocalizedMessage());
             }
         } else {
             return hrefs;
