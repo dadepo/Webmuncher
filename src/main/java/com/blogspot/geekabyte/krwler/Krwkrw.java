@@ -44,7 +44,7 @@ public class Krwkrw {
     private String baseUrl;
     private ExecutorService executorService;
     private Map<String, Integer> retryLog = new HashMap<>();
-    private int delay = 1000;
+    private int delay = 1;
     private int maxRetry = 0;
     private List<String> userAgents = new ArrayList<>();
     private List<String> referrals = new ArrayList<>();
@@ -72,14 +72,14 @@ public class Krwkrw {
     /**
      * Gets the set delay between each requests
      *  
-     * @return delay the set delay in milliseconds
+     * @return delay: the set delay (in seconds), between each crawling requests
      */
     public int getDelay() {
         return delay;
     }
 
     /**
-     * Sets the delay. The default is 1000.
+     * Sets the delay (in seconds) between each crawling requests. The default is 1 i.e. 1 second.
      * @param delay delay between each crawling requests
      */
     public void setDelay(int delay) {
@@ -313,7 +313,7 @@ public class Krwkrw {
                 // perform action on fetchedPage
                 action.execute(fetchedPage);
                 logger.info("Crawled {}", url);
-                Thread.sleep(delay);
+                Thread.sleep(delay*1000);
             } catch (IOException e) {
                 if (e instanceof UnsupportedMimeTypeException) {
                     fetchedPage.setStatus(415);
