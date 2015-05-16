@@ -1,7 +1,7 @@
 package com.blogspot.geekabyte.krwler;
 
 import com.blogspot.geekabyte.krwler.interfaces.KrwlerAction;
-import com.blogspot.geekabyte.krwler.interfaces.callbacks.KrawlerExitCallback;
+import com.blogspot.geekabyte.krwler.interfaces.callbacks.KrwlerExitCallback;
 import org.junit.*;
 import org.junit.runner.*;
 import org.mockito.*;
@@ -81,7 +81,7 @@ public class KrwkrwIntegrationTest {
     @Test
     public void test_on_exit_callback() throws Exception {
         KrwlerAction mockAction = mock(KrwlerAction.class);
-        KrawlerExitCallback mockCallBack = mock(KrawlerExitCallback.class);
+        KrwlerExitCallback mockCallBack = mock(KrwlerExitCallback.class);
         Krwkrw krwkrwSUT = new Krwkrw(mockAction);
 
         krwkrwSUT.onExit(mockCallBack);

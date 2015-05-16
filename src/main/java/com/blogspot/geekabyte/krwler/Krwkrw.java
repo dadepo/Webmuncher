@@ -1,8 +1,7 @@
 package com.blogspot.geekabyte.krwler;
 
 import com.blogspot.geekabyte.krwler.interfaces.KrwlerAction;
-import com.blogspot.geekabyte.krwler.interfaces.callbacks.KrawlerExitCallback;
-import org.jsoup.HttpStatusException;
+import com.blogspot.geekabyte.krwler.interfaces.callbacks.KrwlerExitCallback;
 import org.jsoup.Jsoup;
 import org.jsoup.UnsupportedMimeTypeException;
 import org.jsoup.nodes.Document;
@@ -49,7 +48,7 @@ public class Krwkrw {
     private List<String> userAgents = new ArrayList<>();
     private List<String> referrals = new ArrayList<>();
     private KrwlerAction action;
-    private KrawlerExitCallback krawlerExitCallback;
+    private KrwlerExitCallback krwlerExitCallback;
     private Set<String> excludeURLs = new HashSet<>();
 
 
@@ -177,12 +176,12 @@ public class Krwkrw {
 
 
     /**
-     * Registers callback on krawlerExitCallback
+     * Registers callback on krwlerExitCallback
      * 
-     * @param krawlerExitCallbackCallBack the call back to fire when crawler finishes and exits
+     * @param krwlerExitCallbackCallBack the call back to fire when crawler finishes and exits
      */
-    public void onExit(KrawlerExitCallback krawlerExitCallbackCallBack) {
-        krawlerExitCallback = krawlerExitCallbackCallBack;
+    public void onExit(KrwlerExitCallback krwlerExitCallbackCallBack) {
+        krwlerExitCallback = krwlerExitCallbackCallBack;
     }
 
     /**
@@ -438,8 +437,8 @@ public class Krwkrw {
     }
     
     private void fireOnExit(Set<String> urls) {
-        if (krawlerExitCallback != null) {
-            krawlerExitCallback.callBack(urls);
+        if (krwlerExitCallback != null) {
+            krwlerExitCallback.callBack(urls);
         }
     }
     

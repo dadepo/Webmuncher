@@ -7,7 +7,7 @@ import java.util.Set;
  * Created by dadepo on 1/6/15.
  */
 @FunctionalInterface
-public interface KrawlerExitCallback {
+public interface KrwlerExitCallback {
 
     /**
      * Method to execute when crawler finishes

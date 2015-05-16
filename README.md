@@ -1,18 +1,10 @@
-krwkrw is a tool that can be used to easily retrieve all the contents of a website. More accurately contents under a 
-single domain. This is its perfect use case which reflects the original need for which it was written: Read about more
-on that [here] (http://geekabyte.blogspot.be/2014/12/a-web-scrapercrawler-in-java-krwkrw.html)
+`krwkrw (formally Krawkraw)` is a tool that can be used to easily retrieve all the contents of a website. More
+accurately, contents under a single domain. This is the perfect use case which reflects the original need for
+which it was created: Read about more on that [here] (http://geekabyte.blogspot.be/2014/12/a-web-scrapercrawler-in-java-krwkrw.html)
 
-###How to use krwkrw.
+`krwkrw` is available via Maven central, and you can easily drop it into your project with this coordinates:
 
-`krwkrw` is designed around the [Strategy Pattern] (http://en.wikipedia.org/wiki/Strategy_pattern). The main object that
-would be used is the `krwkrw` object, while the client using `krwkrw` would need to provide an implementation of the
-`krwlerAction` interface which contains code that operates on every fetched page represented by the `FetchedPage` object
-
-The `krwlerAction` interface has only one method that needs to be implemented. The `execute()` method. The `execute()`
-method is injected with a `FetchedPage` which contains the information extracted from every crawled pages. e.g, the HTML
-content of the page, the uri of the page, the title of the page, the time it took `krwkrw` to retrieve the page etc.
-
-`krwkrw` is available via Maven central, and you can easily drop it into your project with this coordinates
+Maven:
 
 ```xml
 <dependency>
@@ -21,13 +13,76 @@ content of the page, the uri of the page, the title of the page, the time it too
 <version>${krwkrw.version}</version>
 </dependency>
 ```
+Gradle:
 
+```groovy
+dependencies {
+    compile "com.blogspot.geekabyte.krwkrw:krwler:$krwkrw.version}"
+}
+```
 Or you can also build from source and have the built jar in your classpath.
 
-What a JPA backed `krwlerAction` implementation may look like:
+The available releases can be seen [here] (https://github.com/dadepo/Krwkrw/releases)
 
+###How to use krwkrw.
+
+`krwkrw` is designed around the [Strategy Pattern] (http://en.wikipedia.org/wiki/Strategy_pattern). The main object that
+would be used is the `krwkrw` object, while the client using `krwkrw` would need to provide an implementation of the
+`krwlerAction` interface which contains code that operates on every fetched page represented by the `FetchedPage` object
+
+The `krwlerAction` interface has only one method that needs to be implemented. The `execute()` method. The `execute()`
+method is given a `FetchedPage` object which contains the information extracted from every crawled pages. e.g, the HTML
+content of the page, the uri of the page, the title of the page, the time it took `krwkrw` to retrieve the page etc.
+
+Since _version 0.1.2_ `Krwkrw` comes with utility `KrwlerActions`, that makes it easy to persist pages crawled.
+The included utility actions are:
+
+1. *JDBCAction* - for persisting web pages into a relational database. _(since 0.1.2)_
+2. *ElasticSearchAction* - for indexing web pages into ElasticSearch. _(since 0.1.2)_
+3. *CSVAction* - for saving web pages into a CSV file. _(since 0.1.2)_
+
+For example to use `Krwkrw` to extract all the contents of `http://www.example.com` into a CSV file, you do:
+
+```java
+
+    CSVAction action = CSVAction.builder()
+                .convertToPlainText(true) // converts HTML to plain text
+                .setDestination(Paths.get("example-com.csv"))
+                .buildAction();
+
+        Krwkrw crawler = new Krwkrw(action); // creates an instance of the crawler with the action
+
+        // Configure the crawler to your hearts desire
+        crawler.setDelay(20); // Crawler will wait 20 seconds between each requests
+        crawler.setMaxRetry(3) // When at first you don't succeed? Give up and move onto the next one, after 3 attempts!
+
+        // the crawler would select randomly from the list of user agents you give for each request
+        crawler.setUserAgents(Arrays.asList(
+                                "Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6",
+                                "Opera/9.80 (X11; Linux i686; Ubuntu/14.10) Presto/2.12.388 Version/12.16")
+                        );
+
+        // Provide the list of addresses to use for the referral. So the folks at example.com when checking
+        // the webserver logs:sometimes the request comes from google, sometimes, yahoo, sometimes bing...
+        crawler.setReferrals(Arrays.asList("http://www.google.com","http://www.yahoo.com", "http://www.bing.com"));
+
+        // Start the crawling operation as a blocking call.
+        Set<String> strings = crawler.doKrawl("http://www.example.com");
+
+        // If you want to execute the crawling in another thread, so the current thread does not block, then do:
+        Set<String> strings = crawler.doKrawlAsync("http://www.example.com");
+
+        // in case you do the crawling in another thread, you most likely want to be notified when the crawling operations
+        // terminates. in such a case, you should use crawler.onExit(KrwlerExitCallback callback) to register the callback
 ```
-class JpaAction implements krwlerAction {
+
+The above steps makes use of the `CSVAction` that comes with the library. In case you have custom operations you want
+applied to the fetched web pages, then you can easily implement your own `KrwlerAction`. for example a JPA backed
+ `krwlerAction` implementation may look like:
+
+
+```java
+class CustomJpaAction implements krwlerAction {
 
         private EntityManager em;
         private EntityManagerFactory emf;
@@ -56,111 +111,17 @@ class JpaAction implements krwlerAction {
             em.getTransaction().commit();
         }
 }
-```
-
-Or a pure JDBC implementation
-
-```
-class JdbcAction implements krwlerAction {
-    public static final String JDBC_CONN_STRING = 
-    "jdbc:mysql://localhost/pages?user=root";
-    
-    private Connection connect = null;
-    private PreparedStatement preparedStatement = null;
-    
-    @Override
-    public void execute(FetchedPage page) {
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-
-            connect = DriverManager.getConnection(JDBC_CONN_STRING);
-
-            preparedStatement = connect
-                    .prepareStatement("insert into pages.page values 
-                    (default, ?, ?, ?, ? , ?, ?)");
 
 
-            preparedStatement.setString(1, page.getUrl());
-            preparedStatement.setString(2, page.getTitle());
-            preparedStatement.setString(3, page.getHtml());
-            preparedStatement.setString(4, page.getSourceUrl());
-            preparedStatement.setLong(5, page.getLoadTime());
-            preparedStatement.setInt(6, page.getStatus());
-            preparedStatement.executeUpdate();
+###Overview of krwkrw API.
 
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
-}
-```
-
-Once you have the `krwlerAction` implemented, you can proceed and use it with an instance of `krwkrw` There are two
-call mode supported. A blocking synchronous call, and a non blocking asynchronous call.
-
-Using `krwkrw` in synchronous call may look like this:
- 
-```
-// initiates a jdbc action
-JdbcAction krwlerAction = new JdbcAction();
-// creates an instance of krwkrw with an implementation of krwlerAction
-krwkrw krwkrw = new krwkrw(krwlerAction);
-        
-public Set<String> fetchPage(krwkaw krwkrw) 
-				   throws IOException, InterruptedException {
-                
-        // gets all the pages from www.example.com
-        return krwkrw.dokrwl("http://www.example.com");
-}
-```
-
-Using `krwkrw` in asynchronous call may look like this:
- 
-```
-// initiates a jdbc action
-JdbcAction krwlerAction = new JdbcAction();
-// creates an instance of krwkrw with an implementation of krwlerAction
-krwkrw krwkrw = new krwkrw(krwlerAction);
-
-public Future<Set<String>> doCrawAsync(krwkaw krwkrw) 
-                           throws IOException, InterruptedException {
-        // Initialize krwkrw for Asynchronous call
-        //destroyAsync() should be called when Future is resolved
-        krwkrw.initializeAsync()
-        
-        return krwkrw.dokrwlAsync("http://www.example.com");
-}
-```
-###Brief Overview of krwkrw API.
-
-| Modifier and Type  | Method and Description |
-| ------------- | ------------- |
-| void  | destroyAsync() Cleans up after Async call has been finished Should ideally be called after dokrwlAsync(String) or dokrwlAsync(String, java.util.Set)  |
-| Set<String>  | dokrwl(String url) Recursively Extracts all href starting from a given url The method is blocking. |
-| Set<String>  | dokrwl(String url, Set<String> excludeURLs) Recursively Extracts all href starting from a given url The method is blocking. |
-| Future<Set<String>>  | dokrwlAsync(String url) Recursively Extracts all href starting from a given url The method is non blocking as extraction operation is called in another thread. |
-| Future<Set<String>> | dokrwlAsync(String url) Recursively Extracts all href starting from a given url The method is non blocking as extraction operation is called in another thread. |
-| Future<Set<String>> | dokrwlAsync(String url, Set<String> excludeURLs) Recursively Extracts all href starting from a given url The method is non blocking as extraction operation is called in another thread. |
-| int | getDelay() Gets the set delay between krwkrw request. |
-| List<String> | getReferrals() Returns the referrals that has been set. |
-| List<String> | getUserAgents() Returns the user agents that has been set. |
-| void | initializeAsync() Sets up for crawling in Async |
-| void | setDelay(int delay) Sets the delay |
-| void | setMaxRetry(int maxRetry) The number of tries for failed request due to time outs |
-| void | setReferrals(List<String> referrals) Sets a list of referrals that would be used for crawling a page. |
-| void | setUserAgents(List<String> userAgents) Sets a list of user agents that would be used for crawling a page. |
-
-For more documentation, the accompanying Javadoc should be helpful. It can be gotten using the
+The accompanying Javadoc should be helpful in having an overview of the API. It can be gotten using the
 [Javadoc tool] (http://www.oracle.com/technetwork/articles/java/index-jsp-135444.html) or via Maven using the
 [Maven Javadoc plugin] (http://maven.apache.org/plugins/maven-javadoc-plugin/).
 
-Thanks to Javadoc.io, you can also access the most recent Javadoc [online](http://www.javadoc.io/doc/com.blogspot.geekabyte.krwkrw/krwler/)
+More conveniently, thanks to [Javadoc.io](http://www.javadoc.io), you can also access the most recent Javadoc [online](http://www.javadoc.io/doc/com.blogspot.geekabyte.krwkrw/krwler/)
+
+The API for the older version: (Krakraw) can be find online [here](http://www.javadoc.io/doc/com.blogspot.geekabyte.krawkraw/krawler/)
 
 ### Licenses
 [The MIT License (MIT)] (http://www.opensource.org/licenses/mit-license.php)
-
-###Change log
-0.1.1
-
-1. Fix multiple crawl of 404 links https://github.com/dadepo/krwkrw/issues/1
-2. Some JavaDoc enhancement https://github.com/dadepo/krwkrw/issues/2
