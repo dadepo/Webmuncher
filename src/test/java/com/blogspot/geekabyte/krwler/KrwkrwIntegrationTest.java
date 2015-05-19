@@ -63,7 +63,7 @@ public class KrwkrwIntegrationTest {
     }
 
     @Test
-    public void test_extractAllFromUrl_Asyncronously() throws Exception {
+    public void test_extractAllFromUrl_Asynchronously() throws Exception {
         KrwlerAction mockAction = mock(KrwlerAction.class);
         Krwkrw krwkrwSUT = new Krwkrw(mockAction);
 

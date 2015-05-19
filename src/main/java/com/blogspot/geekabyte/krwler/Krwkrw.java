@@ -203,12 +203,9 @@ public class Krwkrw {
 
         executorService = Executors.newSingleThreadExecutor();
 
-        Future<Set<String>> future = executorService.submit(new Callable<Set<String>>() {
-            @Override
-            public Set<String> call() throws Exception {
-                return extractor(url, excludeURLs, new HashSet<String>(), "");
-            }
-        });
+        Future<Set<String>> future = executorService.submit(
+                () -> extractor(url, excludeURLs, new HashSet<>(), "")
+        );
 
         return future;
     }
