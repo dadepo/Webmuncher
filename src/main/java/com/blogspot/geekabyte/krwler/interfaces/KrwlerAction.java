@@ -9,6 +9,7 @@ import com.blogspot.geekabyte.krwler.Krwkrw;
  *
  * @author Dadepo Aderemi
  */
+@FunctionalInterface
 public interface KrwlerAction {
 
     /**
