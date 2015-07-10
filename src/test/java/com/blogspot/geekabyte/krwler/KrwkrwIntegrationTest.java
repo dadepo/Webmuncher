@@ -63,6 +63,21 @@ public class KrwkrwIntegrationTest {
     }
 
     @Test
+    public void test_extractAllFromUrl_exclude_url_via_varags() throws Exception {
+        KrwlerAction mockAction = mock(KrwlerAction.class);
+        Krwkrw krwkrwSUT = new Krwkrw(mockAction);
+
+        krwkrwSUT.setDelay(0);
+        krwkrwSUT.setExcludeURLs("http://localhost:50036/mocksitetestexclude/three.html",
+                                 "http://localhost:50036/mocksitetestexclude/one.html");
+        // System under test
+        Set<String> hrefs = krwkrwSUT.crawl(host + "/mocksitetestexclude/index.html");
+
+        assertEquals(hrefs.size(), 2);
+        verify(mockAction, times(2)).execute(any(FetchedPage.class));
+    }
+
+    @Test
     public void test_extractAllFromUrl_Asynchronously() throws Exception {
         KrwlerAction mockAction = mock(KrwlerAction.class);
         Krwkrw krwkrwSUT = new Krwkrw(mockAction);
@@ -119,4 +134,160 @@ public class KrwkrwIntegrationTest {
         }
         assertEquals(notFoundCount, 3);
     }
+
+    @Test
+    public void test_pattern_exclude_all_using_hashset_api() throws Exception {
+        /**
+         * Available paths
+         * /mocksitetestexclude/path/index.html
+         * /mocksitetestexclude/path/one/one.html
+         * /mocksitetestexclude/path/one/two/two.html
+         * /mocksitetestexclude/path/one/two/three/three.html
+         * /mocksitetestexclude/path/one/two/three/four/four.html
+         *
+         **/
+        KrwlerAction mockAction = mock(KrwlerAction.class);
+        Krwkrw krwkrwSUT = new Krwkrw(mockAction);
+
+        Set<String> urlPatternToExclude = new HashSet<>();
+        urlPatternToExclude.add("/**/*.html");
+
+        krwkrwSUT.setExcludePattern(urlPatternToExclude);
+        krwkrwSUT.setDelay(0);
+
+        // System under test
+        Set<String> hrefs = krwkrwSUT.crawl(host + "/mocksitetestexclude/path/index.html");
+
+        assertEquals(hrefs.size(), 0);
+    }
+
+    @Test
+    public void test_pattern_exclude_all_using_varags_api() throws Exception {
+        /**
+         * Available paths
+         * /mocksitetestexclude/path/index.html
+         * /mocksitetestexclude/path/one/one.html
+         * /mocksitetestexclude/path/one/two/two.html
+         * /mocksitetestexclude/path/one/two/three/three.html
+         * /mocksitetestexclude/path/one/two/three/four/four.html
+         *
+         **/
+        KrwlerAction mockAction = mock(KrwlerAction.class);
+        Krwkrw krwkrwSUT = new Krwkrw(mockAction);
+
+        krwkrwSUT.setExcludePattern("/**/*.html");
+        krwkrwSUT.setDelay(0);
+
+        // System under test
+        Set<String> hrefs = krwkrwSUT.crawl(host + "/mocksitetestexclude/path/index.html");
+
+        assertEquals(hrefs.size(), 0);
+    }
+
+    @Test
+    public void test_pattern_exclude_all_under_a_path_using_varags_api() throws Exception {
+        /**
+         * Available paths
+         * /mocksitetestexclude/path/index.html
+         * /mocksitetestexclude/path/one/one.html
+         * /mocksitetestexclude/path/one/two/two.html
+         * /mocksitetestexclude/path/one/two/three/three.html
+         * /mocksitetestexclude/path/one/two/three/four/four.html
+         *
+         **/
+        KrwlerAction mockAction = mock(KrwlerAction.class);
+        Krwkrw krwkrwSUT = new Krwkrw(mockAction);
+
+        krwkrwSUT.setExcludePattern("/**/two/**/*.html"); // omits three.html and four.html
+        krwkrwSUT.setDelay(0);
+
+        // System under test
+        Set<String> hrefs = krwkrwSUT.crawl(host + "/mocksitetestexclude/path/index.html");
+
+        assertEquals(hrefs.size(), 3);
+        assertTrue(!hrefs.contains(host + "/mocksitetestexclude/path/one/two/three/three.html"));
+        assertTrue(!hrefs.contains(host + "/mocksitetestexclude/path/one/two/three/four/four.html"));
+    }
+
+    @Test
+    public void test_pattern_crawl_include_all_using_varags_api() throws Exception {
+        /**
+         * Available paths
+         * /mocksitetestexclude/path/index.html
+         * /mocksitetestexclude/path/one/one.html
+         * /mocksitetestexclude/path/one/two/two.html
+         * /mocksitetestexclude/path/one/two/three/three.html
+         * /mocksitetestexclude/path/one/two/three/four/four.html
+         *
+         **/
+        KrwlerAction mockAction = mock(KrwlerAction.class);
+        Krwkrw krwkrwSUT = new Krwkrw(mockAction);
+
+        krwkrwSUT.setIncludePattern("/**/*.html");
+        krwkrwSUT.setDelay(0);
+
+        // System under test
+        Set<String> hrefs = krwkrwSUT.crawl(host + "/mocksitetestexclude/path/index.html");
+
+        assertEquals(hrefs.size(), 5);
+        assertTrue(hrefs.contains(host + "/mocksitetestexclude/path/index.html"));
+        assertTrue(hrefs.contains(host + "/mocksitetestexclude/path/one/one.html"));
+        assertTrue(hrefs.contains(host + "/mocksitetestexclude/path/one/two/two.html"));
+        assertTrue(hrefs.contains(host + "/mocksitetestexclude/path/one/two/three/three.html"));
+        assertTrue(hrefs.contains(host + "/mocksitetestexclude/path/one/two/three/four/four.html"));
+    }
+
+
+    @Test
+    public void test_pattern_crawl_include_and_exclude_using_varags_api() throws Exception {
+        /**
+         * Available paths
+         * /mocksitetestexclude/path/index.html
+         * /mocksitetestexclude/path/one/one.html
+         * /mocksitetestexclude/path/one/two/two.html
+         * /mocksitetestexclude/path/one/two/three/three.html
+         * /mocksitetestexclude/path/one/two/three/four/four.html
+         *
+         **/
+        KrwlerAction mockAction = mock(KrwlerAction.class);
+        Krwkrw krwkrwSUT = new Krwkrw(mockAction);
+
+        krwkrwSUT.setIncludePattern("/**/*.html"); // include all
+        krwkrwSUT.setExcludePattern("/**/two/**/*.html"); // omits three.html and four.html
+        krwkrwSUT.setDelay(0);
+
+        // System under test
+        Set<String> hrefs = krwkrwSUT.crawl(host + "/mocksitetestexclude/path/index.html");
+
+        assertEquals(hrefs.size(), 3);
+        assertTrue(hrefs.contains(host + "/mocksitetestexclude/path/index.html"));
+        assertTrue(hrefs.contains(host + "/mocksitetestexclude/path/one/one.html"));
+        assertTrue(hrefs.contains(host + "/mocksitetestexclude/path/one/two/two.html"));
+        assertTrue(!hrefs.contains(host + "/mocksitetestexclude/path/one/two/three/three.html"));
+        assertTrue(!hrefs.contains(host + "/mocksitetestexclude/path/one/two/three/four/four.html"));
+    }
+
+    @Test
+    public void test_pattern_add_all_exclude_all_using_varags_api() throws Exception {
+        /**
+         * Available paths
+         * /mocksitetestexclude/path/index.html
+         * /mocksitetestexclude/path/one/one.html
+         * /mocksitetestexclude/path/one/two/two.html
+         * /mocksitetestexclude/path/one/two/three/three.html
+         * /mocksitetestexclude/path/one/two/three/four/four.html
+         *
+         **/
+        KrwlerAction mockAction = mock(KrwlerAction.class);
+        Krwkrw krwkrwSUT = new Krwkrw(mockAction);
+
+        krwkrwSUT.setIncludePattern("/**/*.html");
+        krwkrwSUT.setExcludePattern("/**/*.html");
+        krwkrwSUT.setDelay(0);
+
+        // System under test
+        Set<String> hrefs = krwkrwSUT.crawl(host + "/mocksitetestexclude/path/index.html");
+        assertEquals(hrefs.size(), 0);
+    }
+
 }

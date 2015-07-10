@@ -11,9 +11,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.FileSystems;
+import java.nio.file.PathMatcher;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -24,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -51,9 +55,63 @@ public class Krwkrw {
     private KrwlerExitCallback krwlerExitCallback;
     private Set<String> excludeURLs = new HashSet<>();
 
+    private Set<PathMatcher> includePattern = new HashSet<>();
+    private Set<PathMatcher> excludePattern = new HashSet<>();
+
+
+    /**
+     * Sets the patterns (in glob) a URL should have in other to be crawled
+     *
+     * @param includePattern the patterns as a set of glob Strings
+     */
+    public void setIncludePattern(Set<String> includePattern) {
+        includePattern.forEach(pattern -> {
+            PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("glob:" + pattern);
+            this.includePattern.add(pathMatcher);
+        });
+    }
+
+
+    /**
+     * Sets the patterns (in glob) a URL should have in other to be crawled
+     *
+     * @param includePattern the patterns as a comma separated list of glob strings
+     */
+    public void setIncludePattern(String... includePattern) {
+        Stream.of(includePattern).forEach(pattern -> {
+            PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("glob:" + pattern);
+            this.includePattern.add(pathMatcher);
+        });
+    }
+
+
+    /**
+     * Sets the patterns (in glob) a URL should have in other to be excluded from being crawled
+     *
+     * @param excludePattern the patterns as a set of glob Strings
+     */
+    public void setExcludePattern(Set<String> excludePattern) {
+        excludePattern.forEach(pattern -> {
+            PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("glob:" + pattern);
+            this.excludePattern.add(pathMatcher);
+        });
+    }
+
+    /**
+     * Sets the patterns (in glob) a URL should have in other to be excluded from being crawled
+     *
+     * @param excludePattern the patterns as a comma separated list of glob strings
+     */
+    public void setExcludePattern(String... excludePattern) {
+        Stream.of(excludePattern).forEach(pattern -> {
+            PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("glob:" + pattern);
+            this.excludePattern.add(pathMatcher);
+        });
+    }
 
     /**
      * Gets the URLs to be excluded
+     *
      * @return the URLs to be excluded
      */
     public Set<String> getExcludeURLs() {
@@ -62,15 +120,27 @@ public class Krwkrw {
 
     /**
      * Sets the URLs to be excluded
-     * @param excludeURLs the url to be excluded
+     *
+     * @param excludeURLs the url to be excluded passed in as set of strings
      */
     public void setExcludeURLs(Set<String> excludeURLs) {
         this.excludeURLs = excludeURLs;
     }
 
     /**
+     * Sets the URLs to be excluded
+     *
+     * @param excludeURLs the urls to be excluded passed in as string varargs
+     */
+    public void setExcludeURLs(String... excludeURLs) {
+        Stream.of(excludeURLs).forEach(url -> {
+            this.excludeURLs.add(url);
+        });
+    }
+
+    /**
      * Gets the set delay between each requests
-     *  
+     *
      * @return delay: the set delay (in seconds), between each crawling requests
      */
     public int getDelay() {
@@ -79,22 +149,25 @@ public class Krwkrw {
 
     /**
      * Sets the delay (in seconds) between each crawling requests. The default is 1 i.e. 1 second.
+     *
      * @param delay delay between each crawling requests
      */
     public void setDelay(int delay) {
         this.delay = delay;
     }
-    
+
     /**
      * The number of times to retry failed request due to time outs. The default is 0, meaning no retries.
+     *
      * @param maxRetry the number of max try
      */
     public void setMaxRetry(int maxRetry) {
         this.maxRetry = maxRetry;
     }
-    
+
     /**
      * Returns the user agents that has been set
+     *
      * @return the user agents
      */
     public List<String> getUserAgents() {
@@ -111,9 +184,10 @@ public class Krwkrw {
     public void setUserAgents(List<String> userAgents) {
         this.userAgents = userAgents;
     }
-    
+
     /**
      * Returns the referrals that has been set
+     *
      * @return the referrals
      */
     public List<String> getReferrals() {
@@ -123,7 +197,7 @@ public class Krwkrw {
     /**
      * Sets a list of referrals that would be used for crawling a page. One of the given
      * referrals would be selected randomly for each page request. The default is www.google.com
-     *  
+     *
      * @param referrals a list of referrals
      */
     public void setReferrals(List<String> referrals) {
@@ -149,9 +223,10 @@ public class Krwkrw {
      * @param url         the URL to start extracting from
      * @param excludeURLs a set that contains already crawled URLs. You can include URLS you want omitted
      * @return A set containing all the URL crawled
-     * @throws java.io.IOException if any.
+     *
+     * @throws java.io.IOException            if any.
      * @throws java.lang.InterruptedException if any.
-     * @throws java.net.URISyntaxException if any.
+     * @throws java.net.URISyntaxException    if any.
      */
     private Set<String> doCrawl(String url, Set<String> excludeURLs)
             throws IOException, InterruptedException, URISyntaxException {
@@ -165,9 +240,10 @@ public class Krwkrw {
      *
      * @param url the URL to start extracting from
      * @return A set containing all the URL crawled
-     * @throws java.io.IOException if any.
+     *
+     * @throws java.io.IOException            if any.
      * @throws java.lang.InterruptedException if any.
-     * @throws java.net.URISyntaxException if any.
+     * @throws java.net.URISyntaxException    if any.
      */
     public Set<String> crawl(String url) throws IOException, InterruptedException, URISyntaxException {
         setBaseUrl(url);
@@ -175,9 +251,50 @@ public class Krwkrw {
     }
 
 
+    private boolean include(String url) {
+        boolean include = shouldInclude(url);
+        if (include == true) {
+            // although it is in include, check if this is not overriden by being in exclude
+            include = !shouldExclude(url);
+        }
+        return include;
+    }
+
+    private boolean shouldExclude(String url) {
+        if (excludePattern.isEmpty()) {
+            return false;
+        }
+
+        String path;
+        boolean shouldExclude;
+        try {
+            path = new URL(url).getPath();
+            shouldExclude = excludePattern.stream().anyMatch(pattern -> pattern.matches(Paths.get(path)));
+            return shouldExclude;
+        } catch (MalformedURLException e) {
+            return false;
+        }
+    }
+
+    private boolean shouldInclude(String url) {
+        if (includePattern.isEmpty()) {
+            return true;
+        }
+
+        String path;
+        boolean shouldInclude;
+        try {
+            path = new URL(url).getPath();
+            shouldInclude = includePattern.stream().anyMatch(pattern -> pattern.matches(Paths.get(path)));
+            return shouldInclude;
+        } catch (MalformedURLException e) {
+            return false;
+        }
+    }
+
     /**
      * Registers callback on krwlerExitCallback
-     * 
+     *
      * @param krwlerExitCallbackCallBack the call back to fire when crawler finishes and exits
      */
     public void onExit(KrwlerExitCallback krwlerExitCallbackCallBack) {
@@ -189,12 +306,13 @@ public class Krwkrw {
      * The method is non blocking as extraction operation is called
      * in another thread
      *
-     * @param url a {@link java.lang.String} object.
+     * @param url         a {@link java.lang.String} object.
      * @param excludeURLs a {@link java.util.Set} object.
-     * @throws java.io.IOException if any.
-     * @throws java.lang.InterruptedException if any.
-     * @throws java.net.URISyntaxException if any.
      * @return {@link java.util.concurrent.Future} of a set of urls
+     *
+     * @throws java.io.IOException            if any.
+     * @throws java.lang.InterruptedException if any.
+     * @throws java.net.URISyntaxException    if any.
      */
     private Future<Set<String>> doCrawlAsync(String url, Set<String> excludeURLs)
             throws IOException, InterruptedException, URISyntaxException {
@@ -216,10 +334,11 @@ public class Krwkrw {
      * in another thread
      *
      * @param url a {@link java.lang.String} object.
-     * @throws java.io.IOException if any.
-     * @throws java.lang.InterruptedException if any.
-     * @throws java.net.URISyntaxException if any.
      * @return {@link java.util.concurrent.Future} of a set of urls
+     *
+     * @throws java.io.IOException            if any.
+     * @throws java.lang.InterruptedException if any.
+     * @throws java.net.URISyntaxException    if any.
      */
     public Future<Set<String>> crawlAsync(String url) throws IOException, InterruptedException, URISyntaxException {
         setBaseUrl(url);
@@ -231,6 +350,7 @@ public class Krwkrw {
      *
      * @param url the URL to crawl
      * @return {@link org.jsoup.nodes.Document}
+     *
      * @throws java.io.IOException if any.
      */
     private Document getDocumentFromUrl(String url) throws IOException {
@@ -265,6 +385,7 @@ public class Krwkrw {
     private Set<String> extractor(String url, Set<String> excludeURLs, Set<String> crawledURLs, String sourceUrl)
             throws IOException, InterruptedException {
 
+
         if (excludeURLs == null) {
             excludeURLs = new HashSet<>();
         }
@@ -280,6 +401,13 @@ public class Krwkrw {
         Map<String, Document> out = new HashMap<>();
         // first recursive break condition
         if (!excludeURLs.contains(url)) {
+
+            // Validate against given url patterns to see if valid to perform crawling
+            if (!include(url)) {
+                excludeURLs.add(url);
+                return new HashSet<>();
+            }
+
             // create fetechedPage
             FetchedPage fetchedPage = new FetchedPage();
             try {
@@ -309,12 +437,12 @@ public class Krwkrw {
                 // perform action on fetchedPage
                 action.execute(fetchedPage);
                 logger.info("Crawled {}", url);
-                Thread.sleep(delay*1000);
+                Thread.sleep(delay * 1000);
             } catch (IOException e) {
                 if (e instanceof UnsupportedMimeTypeException) {
                     fetchedPage.setStatus(415);
                     crawledURLs.add(url);
-                } else if(e instanceof SocketTimeoutException) {
+                } else if (e instanceof SocketTimeoutException) {
                     Integer attempts = retryLog.get(url);
                     if (attempts == null) {
                         attempts = 0;
@@ -333,7 +461,6 @@ public class Krwkrw {
                         fetchedPage.setStatus(408);
                         crawledURLs.add(url);
                     }
-
                 } else {
                     fetchedPage.setStatus(404);
                     crawledURLs.add(url);
@@ -432,13 +559,13 @@ public class Krwkrw {
             executorService.shutdown();
         }
     }
-    
+
     private void fireOnExit(Set<String> urls) {
         if (krwlerExitCallback != null) {
             krwlerExitCallback.callBack(urls);
         }
     }
-    
+
     private boolean lastExtractorCall() {
         StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
         Stream<StackTraceElement> stream = Arrays.stream(stackTraceElements);
