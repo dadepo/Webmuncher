@@ -11,20 +11,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.FileSystems;
-import java.nio.file.PathMatcher;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -32,6 +28,8 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -55,57 +53,80 @@ public class Krwkrw {
     private KrwlerExitCallback krwlerExitCallback;
     private Set<String> excludeURLs = new HashSet<>();
 
-    private Set<PathMatcher> includePattern = new HashSet<>();
-    private Set<PathMatcher> excludePattern = new HashSet<>();
+    private Set<Pattern> includePattern = new LinkedHashSet<>();
+    private Set<Pattern> excludePattern = new LinkedHashSet<>();
+    private RandomDelay randomDelay;
 
 
     /**
-     * Sets the patterns (in glob) a URL should have in other to be crawled
+     * Sets the regex patterns a URL should match against in other to be crawled
+     * The patterns are processed based on order of insertion. The first pattern inserted
+     * will be processed first, the last inserted pattern will be processed last. It is
+     * thus advised to provide the patterns in a LinkedHashSet
      *
-     * @param includePattern the patterns as a set of glob Strings
+     * The first pattern to match fulfills the match requirement, which means specific patterns
+     * should be included first.
+     *
+     * @param includePattern the patterns as a set of regex Strings
      */
-    public void setIncludePattern(Set<String> includePattern) {
+    public void match(Set<String> includePattern) {
         includePattern.forEach(pattern -> {
-            PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("glob:" + pattern);
-            this.includePattern.add(pathMatcher);
+            Pattern compiledRegex = Pattern.compile(pattern);
+            this.includePattern.add(compiledRegex);
         });
     }
 
 
     /**
-     * Sets the patterns (in glob) a URL should have in other to be crawled
+     * Sets the regex patterns a URL should match against in other to be crawled
+     * The patterns are processed based on order of insertion. The first pattern inserted
+     * will be processed first, the last inserted pattern will be processed last. It is
+     * thus advised to provide the patterns in a LinkedHashSet
      *
-     * @param includePattern the patterns as a comma separated list of glob strings
+     * The first pattern to match fulfills the match requirement, which means specific patterns
+     * should be included first.
+     *
+     * @param includePattern the patterns as a comma separated list of regex strings
      */
-    public void setIncludePattern(String... includePattern) {
+    public void match(String... includePattern) {
         Stream.of(includePattern).forEach(pattern -> {
-            PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("glob:" + pattern);
-            this.includePattern.add(pathMatcher);
+            Pattern compiledRegex = Pattern.compile(pattern);
+            this.includePattern.add(compiledRegex);
         });
     }
 
 
     /**
-     * Sets the patterns (in glob) a URL should have in other to be excluded from being crawled
+     * Sets the regex patterns a URL should match against in other to be excluded from being crawled
+     * The patterns are processed based on order of insertion. The first pattern inserted
+     * will be processed first, the last inserted pattern will be processed last.
      *
-     * @param excludePattern the patterns as a set of glob Strings
+     * The first pattern to match fulfills the skip requirement, which means specific patterns
+     * should be included first.
+     *
+     * @param excludePattern the patterns as a set of regex Strings
      */
-    public void setExcludePattern(Set<String> excludePattern) {
+    public void skip(Set<String> excludePattern) {
         excludePattern.forEach(pattern -> {
-            PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("glob:" + pattern);
-            this.excludePattern.add(pathMatcher);
+            Pattern compiledRegex = Pattern.compile(pattern);
+            this.excludePattern.add(compiledRegex);
         });
     }
 
     /**
-     * Sets the patterns (in glob) a URL should have in other to be excluded from being crawled
+     * Sets the regex patterns a URL should match against in other to be excluded from being crawled
+     * The patterns are processed based on order of insertion. The first pattern inserted
+     * will be processed first, the last inserted pattern will be processed last.
      *
-     * @param excludePattern the patterns as a comma separated list of glob strings
+     * The first pattern to match fulfills the skip requirement, which means specific patterns
+     * should be included first.
+     *
+     * @param excludePattern the patterns as a comma separated list of regex strings
      */
-    public void setExcludePattern(String... excludePattern) {
+    public void skip(String... excludePattern) {
         Stream.of(excludePattern).forEach(pattern -> {
-            PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("glob:" + pattern);
-            this.excludePattern.add(pathMatcher);
+            Pattern compiledRegex = Pattern.compile(pattern);
+            this.excludePattern.add(compiledRegex);
         });
     }
 
@@ -154,6 +175,19 @@ public class Krwkrw {
      */
     public void setDelay(int delay) {
         this.delay = delay;
+    }
+
+    /**
+     * Set's the lower and upper bound for the delay (in seconds) between each crawling requests
+     *
+     * The required delay is random generated with each requests. The generated random delay will be a number
+     * equals or greater than the minDelay but less or equals to the maxDelay
+     *
+     * @param minDelay the lower bound of delay in seconds
+     * @param maxDelay the upper bound of delay in seconds
+     */
+    public void setDelay(int minDelay, int maxDelay) {
+        this.randomDelay = new RandomDelay(minDelay, maxDelay);
     }
 
     /**
@@ -254,9 +288,10 @@ public class Krwkrw {
     private boolean include(String url) {
         boolean include = shouldInclude(url);
         if (include == true) {
-            // although it is in include, check if this is not overriden by being in exclude
+            // although it is in include, check if this is not overridden by being in exclude
             include = !shouldExclude(url);
         }
+
         return include;
     }
 
@@ -265,15 +300,14 @@ public class Krwkrw {
             return false;
         }
 
-        String path;
+
         boolean shouldExclude;
-        try {
-            path = new URL(url).getPath();
-            shouldExclude = excludePattern.stream().anyMatch(pattern -> pattern.matches(Paths.get(path)));
-            return shouldExclude;
-        } catch (MalformedURLException e) {
-            return false;
-        }
+
+        shouldExclude = excludePattern.stream().anyMatch(pattern -> {
+            Matcher matcher = pattern.matcher(url);
+            return matcher.matches();
+        });
+        return shouldExclude;
     }
 
     private boolean shouldInclude(String url) {
@@ -281,15 +315,12 @@ public class Krwkrw {
             return true;
         }
 
-        String path;
         boolean shouldInclude;
-        try {
-            path = new URL(url).getPath();
-            shouldInclude = includePattern.stream().anyMatch(pattern -> pattern.matches(Paths.get(path)));
-            return shouldInclude;
-        } catch (MalformedURLException e) {
-            return false;
-        }
+        shouldInclude = includePattern.stream().anyMatch(pattern -> {
+            Matcher matcher = pattern.matcher(url);
+            return matcher.matches();
+        });
+        return shouldInclude;
     }
 
     /**
@@ -402,13 +433,11 @@ public class Krwkrw {
         // first recursive break condition
         if (!excludeURLs.contains(url)) {
 
-            // Validate against given url patterns to see if valid to perform crawling
+            // If url does not match include, then add to urls to be excluded.
             if (!include(url)) {
                 excludeURLs.add(url);
-                return new HashSet<>();
             }
 
-            // create fetechedPage
             FetchedPage fetchedPage = new FetchedPage();
             try {
                 // Extract HTML from URL passed in
@@ -420,23 +449,44 @@ public class Krwkrw {
                 // Get all the href in the retrieved page
                 hrefs = new HashSet<>(extractAbsHref(doc));
 
-                // update processing variables
-                // tempresult for keeping processed URL to prevent double processing
-                // pagesOut the map<String, Document> that would be the final result
-                crawledURLs.add(url);
-                out.put(url, doc);
+                Set<String> toExclude = hrefs.stream()
+                                             .filter(href -> !include(href)) // filter href that shouldn't be include
+                                             .collect(Collectors.toSet()); // collect the href to a set
 
-                fetchedPage.setUrl(url);
-                fetchedPage.setStatus(200);
-                fetchedPage.setHtml(doc.outerHtml());
-                fetchedPage.setPlainText(Jsoup.parse(doc.outerHtml()).text());
-                fetchedPage.setTitle(doc.title());
-                fetchedPage.setLoadTime(loadTime);
-                fetchedPage.setSourceUrl(sourceUrl);
+                if (!toExclude.isEmpty()) {
+                    excludeURLs.addAll(toExclude);
+                }
 
                 // perform action on fetchedPage
-                action.execute(fetchedPage);
-                logger.info("Crawled {}", url);
+                // Only do so if the url matches url to be included
+                // for processing
+                if (include(url)) {
+
+                    // update processing variables
+                    // tempresult for keeping processed URL to prevent double processing
+                    // pagesOut the map<String, Document> that would be the final result
+                    crawledURLs.add(url);
+                    out.put(url, doc);
+
+                    fetchedPage.setUrl(url);
+                    fetchedPage.setStatus(200);
+                    fetchedPage.setHtml(doc.outerHtml());
+                    fetchedPage.setPlainText(Jsoup.parse(doc.outerHtml()).text());
+                    fetchedPage.setTitle(doc.title());
+                    fetchedPage.setLoadTime(loadTime);
+                    fetchedPage.setSourceUrl(sourceUrl);
+
+                    action.execute(fetchedPage);
+                    logger.info("Crawled {}", url);
+                } else {
+                    logger.info("Crawled {} but excluding from processing", url);
+                }
+
+                if (randomDelay != null) {
+                    delay = randomDelay.getDelay();
+                }
+
+                logger.info("{} seconds delay before next request", delay);
                 Thread.sleep(delay * 1000);
             } catch (IOException e) {
                 if (e instanceof UnsupportedMimeTypeException) {
@@ -531,23 +581,7 @@ public class Krwkrw {
 
     private void setBaseUrl(String url) throws URISyntaxException {
         URI uri = new URI(url);
-        String host = uri.getHost();
-        int breaker = 0;
-
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i = host.length(); i > 0; i--) {
-            char charAt = host.charAt(i - 1);
-            stringBuilder.append(charAt);
-            if (charAt == '.') {
-                if (++breaker == 2) {
-                    stringBuilder.deleteCharAt(stringBuilder.length() - 1);
-                    break;
-                }
-            }
-        }
-
-        String baseUrl = stringBuilder.reverse().toString();
-        this.baseUrl = baseUrl;
+        this.baseUrl = uri.getHost();
     }
 
     /**
@@ -571,5 +605,28 @@ public class Krwkrw {
         Stream<StackTraceElement> stream = Arrays.stream(stackTraceElements);
         long count = stream.filter(t -> "extractor".equals(t.getMethodName())).count();
         return count == 1;
+    }
+
+
+    /**
+     * Class used to generate delay in seconds between (and could include)
+     * a lower and upper bound
+     */
+    private class RandomDelay {
+
+        private int min;
+        private int max;
+        private Random rand;
+
+        public RandomDelay(int min, int max) {
+            this.min = min;
+            this.max = max;
+
+            rand = new Random();
+        }
+
+        public int getDelay() {
+            return rand.nextInt(max-min  + 1) + min;
+        }
     }
 }

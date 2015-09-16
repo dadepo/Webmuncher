@@ -150,9 +150,9 @@ public class KrwkrwIntegrationTest {
         Krwkrw krwkrwSUT = new Krwkrw(mockAction);
 
         Set<String> urlPatternToExclude = new HashSet<>();
-        urlPatternToExclude.add("/**/*.html");
+        urlPatternToExclude.add(".*");
 
-        krwkrwSUT.setExcludePattern(urlPatternToExclude);
+        krwkrwSUT.skip(urlPatternToExclude);
         krwkrwSUT.setDelay(0);
 
         // System under test
@@ -175,7 +175,7 @@ public class KrwkrwIntegrationTest {
         KrwlerAction mockAction = mock(KrwlerAction.class);
         Krwkrw krwkrwSUT = new Krwkrw(mockAction);
 
-        krwkrwSUT.setExcludePattern("/**/*.html");
+        krwkrwSUT.skip(".*");
         krwkrwSUT.setDelay(0);
 
         // System under test
@@ -198,7 +198,7 @@ public class KrwkrwIntegrationTest {
         KrwlerAction mockAction = mock(KrwlerAction.class);
         Krwkrw krwkrwSUT = new Krwkrw(mockAction);
 
-        krwkrwSUT.setExcludePattern("/**/two/**/*.html"); // omits three.html and four.html
+        krwkrwSUT.skip("\\S+(three.html|four.html)"); // omits three.html and four.html
         krwkrwSUT.setDelay(0);
 
         // System under test
@@ -223,7 +223,7 @@ public class KrwkrwIntegrationTest {
         KrwlerAction mockAction = mock(KrwlerAction.class);
         Krwkrw krwkrwSUT = new Krwkrw(mockAction);
 
-        krwkrwSUT.setIncludePattern("/**/*.html");
+        krwkrwSUT.match("\\S+(\\.html)");
         krwkrwSUT.setDelay(0);
 
         // System under test
@@ -252,8 +252,8 @@ public class KrwkrwIntegrationTest {
         KrwlerAction mockAction = mock(KrwlerAction.class);
         Krwkrw krwkrwSUT = new Krwkrw(mockAction);
 
-        krwkrwSUT.setIncludePattern("/**/*.html"); // include all
-        krwkrwSUT.setExcludePattern("/**/two/**/*.html"); // omits three.html and four.html
+        krwkrwSUT.match("\\S+(\\.html)"); // include all
+        krwkrwSUT.skip("\\S+(three.html)", "\\S+(four.html)"); // omits three.html and four.html
         krwkrwSUT.setDelay(0);
 
         // System under test
@@ -281,8 +281,8 @@ public class KrwkrwIntegrationTest {
         KrwlerAction mockAction = mock(KrwlerAction.class);
         Krwkrw krwkrwSUT = new Krwkrw(mockAction);
 
-        krwkrwSUT.setIncludePattern("/**/*.html");
-        krwkrwSUT.setExcludePattern("/**/*.html");
+        krwkrwSUT.match("\\S+(\\.html)");
+        krwkrwSUT.skip("\\S+(\\.html)");
         krwkrwSUT.setDelay(0);
 
         // System under test
