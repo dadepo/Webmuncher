@@ -449,14 +449,6 @@ public class Krwkrw {
                 // Get all the href in the retrieved page
                 hrefs = new HashSet<>(extractAbsHref(doc));
 
-                Set<String> toExclude = hrefs.stream()
-                                             .filter(href -> !include(href)) // filter href that shouldn't be include
-                                             .collect(Collectors.toSet()); // collect the href to a set
-
-                if (!toExclude.isEmpty()) {
-                    excludeURLs.addAll(toExclude);
-                }
-
                 // perform action on fetchedPage
                 // Only do so if the url matches url to be included
                 // for processing
@@ -485,40 +477,43 @@ public class Krwkrw {
                 if (randomDelay != null) {
                     delay = randomDelay.getDelay();
                 }
-
                 logger.info("{} seconds delay before next request", delay);
                 Thread.sleep(delay * 1000);
             } catch (IOException e) {
-                if (e instanceof UnsupportedMimeTypeException) {
-                    fetchedPage.setStatus(415);
-                    crawledURLs.add(url);
-                } else if (e instanceof SocketTimeoutException) {
-                    Integer attempts = retryLog.get(url);
-                    if (attempts == null) {
-                        attempts = 0;
-                    }
-                    if (attempts == 0 && maxRetry != 0) {
-                        retryLog.put(url, 1);
-                        logger.info("Attempting the first retry to fetch url: {}", url);
-                        extractor(url, excludeURLs, crawledURLs, "");
-                        return hrefs;
-                    } else if (attempts < maxRetry) {
-                        retryLog.put(url, ++attempts);
-                        logger.info("Attempting to fetch url: {} as {} attempts", url, attempts);
-                        extractor(url, excludeURLs, crawledURLs, "");
-                        return hrefs;
+
+                // only execute the exception logic if the url attempted was to be included.
+                if (include(url)) {
+                    if (e instanceof UnsupportedMimeTypeException) {
+                        fetchedPage.setStatus(415);
+                        crawledURLs.add(url);
+                    } else if (e instanceof SocketTimeoutException) {
+                        Integer attempts = retryLog.get(url);
+                        if (attempts == null) {
+                            attempts = 0;
+                        }
+                        if (attempts == 0 && maxRetry != 0) {
+                            retryLog.put(url, 1);
+                            logger.info("Attempting the first retry to fetch url: {}", url);
+                            extractor(url, excludeURLs, crawledURLs, "");
+                            return hrefs;
+                        } else if (attempts < maxRetry) {
+                            retryLog.put(url, ++attempts);
+                            logger.info("Attempting to fetch url: {} as {} attempts", url, attempts);
+                            extractor(url, excludeURLs, crawledURLs, "");
+                            return hrefs;
+                        } else {
+                            fetchedPage.setStatus(408);
+                            crawledURLs.add(url);
+                        }
                     } else {
-                        fetchedPage.setStatus(408);
+                        fetchedPage.setStatus(404);
                         crawledURLs.add(url);
                     }
-                } else {
-                    fetchedPage.setStatus(404);
-                    crawledURLs.add(url);
+                    fetchedPage.setUrl(url);
+                    fetchedPage.setSourceUrl(sourceUrl);
+                    action.execute(fetchedPage);
+                    logger.error("Failed to crawl {}. With error message: {}", url, e.getLocalizedMessage());
                 }
-                fetchedPage.setUrl(url);
-                fetchedPage.setSourceUrl(sourceUrl);
-                action.execute(fetchedPage);
-                logger.error("Failed to crawl {}. With error message: {}", url, e.getLocalizedMessage());
             }
         } else {
             return hrefs;
