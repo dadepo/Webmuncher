@@ -24,6 +24,8 @@ Or you can also build from source and have the built jar in your classpath.
 
 The available releases can be seen [here] (https://github.com/dadepo/Krwkrw/releases)
 
+The announcement for the most recent release can be seen [here](http://geekabyte.blogspot.nl/2015/09/krwkrw-013-released.html)
+
 ###How to use krwkrw.
 
 `krwkrw` is designed around the [Strategy Pattern] (http://en.wikipedia.org/wiki/Strategy_pattern). The main object that
@@ -79,11 +81,11 @@ For example, to use `Krwkrw` to extract all the contents of `http://www.example.
                     "http://www.bing.com"));
 
         // Start the crawling operation as a blocking call.
-        Set<String> strings = crawler.doKrawl("http://www.example.com");
+        Set<String> strings = crawler.crawl("http://www.example.com");
 
         // If you want to execute the crawling in another thread,
         // so the current thread does not block, then do:
-        Set<String> strings = crawler.doKrawlAsync("http://www.example.com");
+        Set<String> strings = crawler.crawlAsync("http://www.example.com");
 
         // in case you do the crawling in another thread,
         // you most likely want to be notified when the
@@ -135,7 +137,7 @@ The accompanying Javadoc should be helpful in having an overview of the API. It 
 [Javadoc tool] (http://www.oracle.com/technetwork/articles/java/index-jsp-135444.html) or via Maven using the
 [Maven Javadoc plugin] (http://maven.apache.org/plugins/maven-javadoc-plugin/).
 
-More conveniently, thanks to [Javadoc.io](http://www.javadoc.io), you can also access the most recent Javadoc [online](http://www.javadoc.io/doc/com.blogspot.geekabyte.krwkrw/krwler/)
+More conveniently, thanks to Javadoc.io, you can also access the most recent Javadoc [online](http://www.javadoc.io/doc/com.blogspot.geekabyte.krwkrw/krwler/)
 
 The API for the older version: (Krakraw) can be find online [here](http://www.javadoc.io/doc/com.blogspot.geekabyte.krawkraw/krawler/)
 
