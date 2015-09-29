@@ -528,7 +528,7 @@ public class Krwkrw {
                     // the action's execute is still called because
                     // we want to save the url that were broken, for instance
                     action.execute(fetchedPage);
-                    logger.error("Failed to crawl {}. With error message: {}", url, e.getLocalizedMessage());
+                    logger.error("Failed to crawl {}. With error message: {}", url, e);
                 }
             }
         } else {
