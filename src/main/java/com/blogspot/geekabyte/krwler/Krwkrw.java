@@ -56,6 +56,7 @@ public class Krwkrw {
     private Set<Pattern> includePattern = new LinkedHashSet<>();
     private Set<Pattern> excludePattern = new LinkedHashSet<>();
     private RandomDelay randomDelay;
+    private int timeout = 1000;
 
 
     /**
@@ -188,6 +189,15 @@ public class Krwkrw {
      */
     public void setDelay(int minDelay, int maxDelay) {
         this.randomDelay = new RandomDelay(minDelay, maxDelay);
+    }
+
+    /**
+     * Set's the time in seconds for the connection to wait before
+     * a {@link SocketTimeoutException} is thrown. The Default is 10 seconds
+     * @param timeout the amount of seconds to wait before a timeout
+     */
+    public void setTimeout(int timeout) {
+        this.timeout = timeout * 1000;
     }
 
     /**
@@ -389,6 +399,7 @@ public class Krwkrw {
         String referral = randomSelectReferral();
         Document doc = Jsoup
                 .connect(url)
+                .timeout(timeout)
                 .userAgent(userAgent)
                 .referrer(referral)
                 .get();
@@ -487,6 +498,9 @@ public class Krwkrw {
                         fetchedPage.setStatus(415);
                         crawledURLs.add(url);
                     } else if (e instanceof SocketTimeoutException) {
+                        // it is a SocketTimeout Exception, it is probably a good idea to chill init?
+                        Thread.sleep(3000);
+                        // Things should have cooled off a bit? proceed.
                         Integer attempts = retryLog.get(url);
                         if (attempts == null) {
                             attempts = 0;
@@ -511,6 +525,8 @@ public class Krwkrw {
                     }
                     fetchedPage.setUrl(url);
                     fetchedPage.setSourceUrl(sourceUrl);
+                    // the action's execute is still called because
+                    // we want to save the url that were broken, for instance
                     action.execute(fetchedPage);
                     logger.error("Failed to crawl {}. With error message: {}", url, e.getLocalizedMessage());
                 }
