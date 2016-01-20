@@ -1,3 +1,6 @@
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.blogspot.geekabyte.krwkrw/krwler/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.blogspot.geekabyte.krwkrw/krwler/)
+[![Javadoc](https://javadoc-emblem.rhcloud.com/doc/com.blogspot.geekabyte.krwkrw/krwler/badge.svg)](http://www.javadoc.io/doc/com.blogspot.geekabyte.krwkrw/krwler/)
+
 `krwkrw (formally Krawkraw)` is a tool that can be used to easily retrieve all the contents of a website. More
 accurately, contents under a single domain. This is the perfect use case which reflects the original need for
 which it was created: Read more about that [here] (http://geekabyte.blogspot.be/2014/12/a-web-scrapercrawler-in-java-krwkrw.html)
