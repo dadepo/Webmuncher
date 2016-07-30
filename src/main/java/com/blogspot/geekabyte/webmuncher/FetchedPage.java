@@ -1,4 +1,4 @@
-package com.blogspot.geekabyte.krwler;
+package com.blogspot.geekabyte.webmuncher;
 
 /**
  * Class representing fetched web pages

@@ -1,4 +1,4 @@
-package com.blogspot.geekabyte.krwler;
+package com.blogspot.geekabyte.webmuncher;
 
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;

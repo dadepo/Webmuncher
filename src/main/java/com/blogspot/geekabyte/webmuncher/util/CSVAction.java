@@ -1,8 +1,8 @@
-package com.blogspot.geekabyte.krwler.util;
+package com.blogspot.geekabyte.webmuncher.util;
 
-import com.blogspot.geekabyte.krwler.FetchedPage;
-import com.blogspot.geekabyte.krwler.exceptions.FatalError;
-import com.blogspot.geekabyte.krwler.interfaces.KrwlerAction;
+import com.blogspot.geekabyte.webmuncher.FetchedPage;
+import com.blogspot.geekabyte.webmuncher.exceptions.FatalError;
+import com.blogspot.geekabyte.webmuncher.interfaces.FetchAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.supercsv.cellprocessor.Optional;
@@ -25,12 +25,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Implementation of {@link KrwlerAction} that dumps crawled pages
+ * Implementation of {@link FetchAction} that dumps crawled pages
  * to a CSV file.
  *
  * @author Dadepo Aderemi
  */
-public class CSVAction implements KrwlerAction {
+public class CSVAction implements FetchAction {
 
     Logger logger = LoggerFactory.getLogger(CSVAction.class);
 
@@ -77,7 +77,7 @@ public class CSVAction implements KrwlerAction {
     }
 
     /**
-     * Builder for creating instances of {@link com.blogspot.geekabyte.krwler.util.CSVAction}
+     * Builder for creating instances of {@link com.blogspot.geekabyte.webmuncher.util.CSVAction}
      */
     public static class Builder {
 
@@ -98,9 +98,9 @@ public class CSVAction implements KrwlerAction {
         /**
          * Sets the format used for writing the CSV file
          *
-         * @param format the format expressed as a {@link com.blogspot.geekabyte.krwler.util.CSVAction.CSVFORMAT}
+         * @param format the format expressed as a {@link com.blogspot.geekabyte.webmuncher.util.CSVAction.CSVFORMAT}
          *               if none is configured the
-         *               default is {@link com.blogspot.geekabyte.krwler.util.CSVAction.CSVFORMAT#DEFAULT}
+         *               default is {@link com.blogspot.geekabyte.webmuncher.util.CSVAction.CSVFORMAT#DEFAULT}
          * @return the builder
          */
         public Builder setCSVFormat(CSVFORMAT format) {
@@ -121,9 +121,9 @@ public class CSVAction implements KrwlerAction {
         }
 
         /**
-         * Returns a properly configured instance of {@link com.blogspot.geekabyte.krwler.util.CSVAction}
+         * Returns a properly configured instance of {@link com.blogspot.geekabyte.webmuncher.util.CSVAction}
          *
-         * @return an instance of {@link com.blogspot.geekabyte.krwler.util.CSVAction}
+         * @return an instance of {@link com.blogspot.geekabyte.webmuncher.util.CSVAction}
          */
         public CSVAction buildAction() {
             return instance;

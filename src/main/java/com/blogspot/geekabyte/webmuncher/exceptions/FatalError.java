@@ -1,4 +1,4 @@
-package com.blogspot.geekabyte.krwler.exceptions;
+package com.blogspot.geekabyte.webmuncher.exceptions;
 
 /**
  * A fatal error exception that terminates the execution of the crawler. Should not be caught.
@@ -8,7 +8,7 @@ public class FatalError extends RuntimeException {
     private final String message;
 
     /**
-     * Creates an instances of {@link com.blogspot.geekabyte.krwler.exceptions.FatalError}
+     * Creates an instances of {@link com.blogspot.geekabyte.webmuncher.exceptions.FatalError}
      * Supplies the reason for the fatal error as contructor argument
      * @param message the reason for the fatal error
      */

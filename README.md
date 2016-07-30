@@ -1,52 +1,52 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.blogspot.geekabyte.krwkrw/krwler/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.blogspot.geekabyte.krwkrw/krwler/)
 [![Javadoc](https://javadoc-emblem.rhcloud.com/doc/com.blogspot.geekabyte.krwkrw/krwler/badge.svg)](http://www.javadoc.io/doc/com.blogspot.geekabyte.krwkrw/krwler/)
 
-`krwkrw (formally Krawkraw)` is a tool that can be used to easily retrieve all the contents of a website. More
+`webmuncher` is a tool that can be used to easily retrieve all the contents of a website. More
 accurately, contents under a single domain. This is the perfect use case which reflects the original need for
 which it was created: Read more about that [here] (http://geekabyte.blogspot.be/2014/12/a-web-scrapercrawler-in-java-krwkrw.html)
 
-`krwkrw` is available via Maven central, and you can easily drop it into your project with this coordinates:
+`webmuncher` is available via Maven central, and you can easily drop it into your project with this coordinates:
 
 Maven:
 
 ```xml
 <dependency>
-<groupid>com.blogspot.geekabyte.krwkrw</groupid>
+<groupid>com.blogspot.geekabyte.webmuncher</groupid>
 <artifactid>krwler</artifactid>
-<version>${krwkrw.version}</version>
+<version>${webmuncher.version}</version>
 </dependency>
 ```
 Gradle:
 
 ```groovy
 dependencies {
-    compile "com.blogspot.geekabyte.krwkrw:krwler:$krwkrw.version}"
+    compile "com.blogspot.geekabyte.webmuncher:krwler:$webmuncher.version}"
 }
 ```
 Or you can also build from source and have the built jar in your classpath.
 
-The available releases can be seen [here] (https://github.com/dadepo/Krwkrw/releases)
+The available releases can be seen [here] (https://github.com/dadepo/webmuncher/releases)
 
-The announcement for the most recent release can be seen [here](http://geekabyte.blogspot.nl/2015/09/krwkrw-013-released.html)
+The announcement for the most recent release can be seen [here](http://geekabyte.blogspot.nl/2015/09/webmuncher-013-released.html)
 
-###How to use krwkrw.
+###How to use webmuncher.
 
-`krwkrw` is designed around the [Strategy Pattern] (http://en.wikipedia.org/wiki/Strategy_pattern). The main object that
-would be used is the `krwkrw` object, while the client using `krwkrw` would need to provide an implementation of the
-`krwlerAction` interface which contains code that operates on every fetched page represented by the `FetchedPage` object
+`webmuncher` is designed around the [Strategy Pattern] (http://en.wikipedia.org/wiki/Strategy_pattern). The main object that
+would be used is the `webmuncher` object, while the client using `webmuncher` would need to provide an implementation of the
+`webAction` interface which contains code that operates on every fetched page represented by the `FetchedPage` object
 
-The `krwlerAction` interface has only one method that needs to be implemented. The `execute()` method. The `execute()`
+The `webAction` interface has only one method that needs to be implemented. The `execute()` method. The `execute()`
 method is given a `FetchedPage` object which contains the information extracted from every crawled pages. e.g, the HTML
-content of the page, the uri of the page, the title of the page, the time it took `krwkrw` to retrieve the page etc.
+content of the page, the uri of the page, the title of the page, the time it took `webmuncher` to retrieve the page etc.
 
-Since _version 0.1.2_ `Krwkrw` comes with utility `KrwlerActions`, that makes it easy to persist pages crawled.
+Since _version 0.1.2_ `webmuncher` comes with utility `KrwlerActions`, that makes it easy to persist pages crawled.
 The included utility actions are:
 
 1. *JDBCAction* - for persisting web pages into a relational database. _(since 0.1.2)_
 2. *ElasticSearchAction* - for indexing web pages into ElasticSearch. _(since 0.1.2)_
 3. *CSVAction* - for saving web pages into a CSV file. _(since 0.1.2)_
 
-For example, to use `Krwkrw` to extract all the contents of `http://www.example.com` into a CSV file, you do:
+For example, to use `webmuncher` to extract all the contents of `http://www.example.com` into a CSV file, you do:
 
 ```java
 
@@ -57,7 +57,7 @@ For example, to use `Krwkrw` to extract all the contents of `http://www.example.
                 .buildAction();
 
     // creates an instance of the crawler with the action
-    Krwkrw crawler = new Krwkrw(action);
+    webmuncher crawler = new webmuncher(action);
 
     // Configure the crawler to your hearts desire
 
@@ -99,17 +99,17 @@ For example, to use `Krwkrw` to extract all the contents of `http://www.example.
 
 The above steps makes use of the `CSVAction` that comes with the library. In case you have custom operations you want
 applied to the fetched web pages, then you can easily implement your own `KrwlerAction`. for example a JPA backed
- `krwlerAction` implementation may look like:
+ `webAction` implementation may look like:
 
 
 ```java
-class CustomJpaAction implements krwlerAction {
+class CustomJpaAction implements webAction {
 
         private EntityManager em;
         private EntityManagerFactory emf;
 
         /**
-         * Operates on given {@link com.blogspot.geekabyte.krwkrw.FetchedPage}
+         * Operates on given {@link com.blogspot.geekabyte.webmuncher.FetchedPage}
          *
          * @param page
          */
@@ -134,13 +134,13 @@ class CustomJpaAction implements krwlerAction {
 }
 ```
 
-###Overview of krwkrw API.
+###Overview of webmuncher API.
 
 The accompanying Javadoc should be helpful in having an overview of the API. It can be gotten using the
 [Javadoc tool] (http://www.oracle.com/technetwork/articles/java/index-jsp-135444.html) or via Maven using the
 [Maven Javadoc plugin] (http://maven.apache.org/plugins/maven-javadoc-plugin/).
 
-More conveniently, thanks to Javadoc.io, you can also access the most recent Javadoc [online](http://www.javadoc.io/doc/com.blogspot.geekabyte.krwkrw/krwler/)
+More conveniently, thanks to Javadoc.io, you can also access the most recent Javadoc [online](http://www.javadoc.io/doc/com.blogspot.geekabyte.webmuncher/krwler/)
 
 The API for the older version: (Krakraw) can be find online [here](http://www.javadoc.io/doc/com.blogspot.geekabyte.krawkraw/krawler/)
 

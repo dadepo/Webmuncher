@@ -1,4 +1,4 @@
-package com.blogspot.geekabyte.krwler.interfaces.callbacks;
+package com.blogspot.geekabyte.webmuncher.interfaces.callbacks;
 
 import java.util.Set;
 
@@ -7,7 +7,7 @@ import java.util.Set;
  * Created by dadepo on 1/6/15.
  */
 @FunctionalInterface
-public interface KrwlerExitCallback {
+public interface FetchExitCallback {
 
     /**
      * Method to execute when crawler finishes

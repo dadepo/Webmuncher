@@ -1,7 +1,7 @@
-package com.blogspot.geekabyte.krwler;
+package com.blogspot.geekabyte.webmuncher;
 
-import com.blogspot.geekabyte.krwler.interfaces.KrwlerAction;
-import com.blogspot.geekabyte.krwler.interfaces.callbacks.KrwlerExitCallback;
+import com.blogspot.geekabyte.webmuncher.interfaces.FetchAction;
+import com.blogspot.geekabyte.webmuncher.interfaces.callbacks.FetchExitCallback;
 import org.jsoup.Jsoup;
 import org.jsoup.UnsupportedMimeTypeException;
 import org.jsoup.nodes.Document;
@@ -34,13 +34,13 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * <p>Krwkrw class.</p>
+ * <p>Webmuncher class.</p>
  *
  * @author Dadepo Aderemi.
  */
-public class Krwkrw {
+public class Webmuncher {
 
-    Logger logger = LoggerFactory.getLogger(Krwkrw.class);
+    Logger logger = LoggerFactory.getLogger(Webmuncher.class);
 
     private String baseUrl;
     private ExecutorService executorService;
@@ -49,8 +49,8 @@ public class Krwkrw {
     private int maxRetry = 0;
     private List<String> userAgents = new ArrayList<>();
     private List<String> referrals = new ArrayList<>();
-    private KrwlerAction action;
-    private KrwlerExitCallback krwlerExitCallback;
+    private FetchAction action;
+    private FetchExitCallback fetchExitCallback;
     private Set<String> excludeURLs = new HashSet<>();
 
     private Set<Pattern> includePattern = new LinkedHashSet<>();
@@ -249,15 +249,15 @@ public class Krwkrw {
     }
 
     /**
-     * Public constructor for {@link Krwkrw}
-     * takes an instance of {@link KrwlerAction} which
+     * Public constructor for {@link Webmuncher}
+     * takes an instance of {@link FetchAction} which
      * is used to operate on a fetched url
-     * represented by {@link com.blogspot.geekabyte.krwler.FetchedPage}
+     * represented by {@link com.blogspot.geekabyte.webmuncher.FetchedPage}
      *
-     * @param krwlerAction a {@link KrwlerAction} object.
+     * @param webAction a {@link FetchAction} object.
      */
-    public Krwkrw(KrwlerAction krwlerAction) {
-        action = krwlerAction;
+    public Webmuncher(FetchAction webAction) {
+        action = webAction;
     }
 
     /**
@@ -334,12 +334,12 @@ public class Krwkrw {
     }
 
     /**
-     * Registers callback on krwlerExitCallback
+     * Registers callback on fetchExitCallback
      *
-     * @param krwlerExitCallbackCallBack the call back to fire when crawler finishes and exits
+     * @param fetchExitCallbackCallBack the call back to fire when crawler finishes and exits
      */
-    public void onExit(KrwlerExitCallback krwlerExitCallbackCallBack) {
-        krwlerExitCallback = krwlerExitCallbackCallBack;
+    public void onExit(FetchExitCallback fetchExitCallbackCallBack) {
+        fetchExitCallback = fetchExitCallbackCallBack;
     }
 
     /**
@@ -606,8 +606,8 @@ public class Krwkrw {
     }
 
     private void fireOnExit(Set<String> urls) {
-        if (krwlerExitCallback != null) {
-            krwlerExitCallback.callBack(urls);
+        if (fetchExitCallback != null) {
+            fetchExitCallback.callBack(urls);
         }
     }
 

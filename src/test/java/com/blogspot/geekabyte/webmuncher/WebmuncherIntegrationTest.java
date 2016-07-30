@@ -1,7 +1,7 @@
-package com.blogspot.geekabyte.krwler;
+package com.blogspot.geekabyte.webmuncher;
 
-import com.blogspot.geekabyte.krwler.interfaces.KrwlerAction;
-import com.blogspot.geekabyte.krwler.interfaces.callbacks.KrwlerExitCallback;
+import com.blogspot.geekabyte.webmuncher.interfaces.FetchAction;
+import com.blogspot.geekabyte.webmuncher.interfaces.callbacks.FetchExitCallback;
 import org.junit.*;
 import org.junit.runner.*;
 import org.mockito.*;
@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class KrwkrwIntegrationTest {
+public class WebmuncherIntegrationTest {
 
     private final String host = "http://localhost:" + TestServer.HTTP_PORT;
     TestServer testServer;
@@ -34,12 +34,12 @@ public class KrwkrwIntegrationTest {
     
     @Test
     public void test_extractAllFromUrl() throws Exception {
-        KrwlerAction mockAction = mock(KrwlerAction.class);
-        Krwkrw krwkrwSUT = new Krwkrw(mockAction);
+        FetchAction mockAction = mock(FetchAction.class);
+        Webmuncher webmuncherSUT = new Webmuncher(mockAction);
 
-        krwkrwSUT.setDelay(0);
+        webmuncherSUT.setDelay(0);
         // System under test
-        Set<String> hrefs = krwkrwSUT.crawl(host + "/mocksite/index.html");
+        Set<String> hrefs = webmuncherSUT.crawl(host + "/mocksite/index.html");
 
         assertEquals(hrefs.size(), 6);
         verify(mockAction, times(6)).execute(any(FetchedPage.class));
@@ -47,16 +47,16 @@ public class KrwkrwIntegrationTest {
 
     @Test
     public void test_extractAllFromUrl_exclude_url() throws Exception {
-        KrwlerAction mockAction = mock(KrwlerAction.class);
-        Krwkrw krwkrwSUT = new Krwkrw(mockAction);
+        FetchAction mockAction = mock(FetchAction.class);
+        Webmuncher webmuncherSUT = new Webmuncher(mockAction);
         Set<String> urlToExclude = new HashSet<>();
         urlToExclude.add("http://localhost:50036/mocksitetestexclude/three.html");
         urlToExclude.add("http://localhost:50036/mocksitetestexclude/one.html");
 
-        krwkrwSUT.setDelay(0);
-        krwkrwSUT.setExcludeURLs(urlToExclude);
+        webmuncherSUT.setDelay(0);
+        webmuncherSUT.setExcludeURLs(urlToExclude);
         // System under test
-        Set<String> hrefs = krwkrwSUT.crawl(host + "/mocksitetestexclude/index.html");
+        Set<String> hrefs = webmuncherSUT.crawl(host + "/mocksitetestexclude/index.html");
 
         assertEquals(hrefs.size(), 2);
         verify(mockAction, times(2)).execute(any(FetchedPage.class));
@@ -64,14 +64,14 @@ public class KrwkrwIntegrationTest {
 
     @Test
     public void test_extractAllFromUrl_exclude_url_via_varags() throws Exception {
-        KrwlerAction mockAction = mock(KrwlerAction.class);
-        Krwkrw krwkrwSUT = new Krwkrw(mockAction);
+        FetchAction mockAction = mock(FetchAction.class);
+        Webmuncher webmuncherSUT = new Webmuncher(mockAction);
 
-        krwkrwSUT.setDelay(0);
-        krwkrwSUT.setExcludeURLs("http://localhost:50036/mocksitetestexclude/three.html",
+        webmuncherSUT.setDelay(0);
+        webmuncherSUT.setExcludeURLs("http://localhost:50036/mocksitetestexclude/three.html",
                                  "http://localhost:50036/mocksitetestexclude/one.html");
         // System under test
-        Set<String> hrefs = krwkrwSUT.crawl(host + "/mocksitetestexclude/index.html");
+        Set<String> hrefs = webmuncherSUT.crawl(host + "/mocksitetestexclude/index.html");
 
         assertEquals(hrefs.size(), 2);
         verify(mockAction, times(2)).execute(any(FetchedPage.class));
@@ -79,12 +79,12 @@ public class KrwkrwIntegrationTest {
 
     @Test
     public void test_extractAllFromUrl_Asynchronously() throws Exception {
-        KrwlerAction mockAction = mock(KrwlerAction.class);
-        Krwkrw krwkrwSUT = new Krwkrw(mockAction);
+        FetchAction mockAction = mock(FetchAction.class);
+        Webmuncher webmuncherSUT = new Webmuncher(mockAction);
 
-        krwkrwSUT.setDelay(0);
+        webmuncherSUT.setDelay(0);
         // System under test
-        Future<Set<String>> futureHrefs = krwkrwSUT.crawlAsync(host + "/mocksite/index.html");
+        Future<Set<String>> futureHrefs = webmuncherSUT.crawlAsync(host + "/mocksite/index.html");
 
         Set<String> hrefs = futureHrefs.get();
 
@@ -95,14 +95,14 @@ public class KrwkrwIntegrationTest {
     
     @Test
     public void test_on_exit_callback() throws Exception {
-        KrwlerAction mockAction = mock(KrwlerAction.class);
-        KrwlerExitCallback mockCallBack = mock(KrwlerExitCallback.class);
-        Krwkrw krwkrwSUT = new Krwkrw(mockAction);
+        FetchAction mockAction = mock(FetchAction.class);
+        FetchExitCallback mockCallBack = mock(FetchExitCallback.class);
+        Webmuncher webmuncherSUT = new Webmuncher(mockAction);
 
-        krwkrwSUT.onExit(mockCallBack);
-        krwkrwSUT.setDelay(0);
+        webmuncherSUT.onExit(mockCallBack);
+        webmuncherSUT.setDelay(0);
         // System under test
-        Future<Set<String>> futureHrefs = krwkrwSUT.crawlAsync(host + "/mocksite/index.html");
+        Future<Set<String>> futureHrefs = webmuncherSUT.crawlAsync(host + "/mocksite/index.html");
 
         Set<String> hrefs = futureHrefs.get();
 
@@ -114,12 +114,12 @@ public class KrwkrwIntegrationTest {
     
     @Test
     public void test_extractBrokenLink() throws Exception {
-        KrwlerAction mockAction = mock(KrwlerAction.class);
-        Krwkrw krwkrwSUT = new Krwkrw(mockAction);
+        FetchAction mockAction = mock(FetchAction.class);
+        Webmuncher webmuncherSUT = new Webmuncher(mockAction);
 
-        krwkrwSUT.setDelay(0);
+        webmuncherSUT.setDelay(0);
         // System under test
-        Set<String> hrefs = krwkrwSUT.crawl(host + "/brokenlink/index.html");
+        Set<String> hrefs = webmuncherSUT.crawl(host + "/brokenlink/index.html");
 
         ArgumentCaptor<FetchedPage> captor = ArgumentCaptor.forClass(FetchedPage.class);
         assertEquals(hrefs.size(), 5);
@@ -146,17 +146,17 @@ public class KrwkrwIntegrationTest {
          * /mocksitetestexclude/path/one/two/three/four/four.html
          *
          **/
-        KrwlerAction mockAction = mock(KrwlerAction.class);
-        Krwkrw krwkrwSUT = new Krwkrw(mockAction);
+        FetchAction mockAction = mock(FetchAction.class);
+        Webmuncher webmuncherSUT = new Webmuncher(mockAction);
 
         Set<String> urlPatternToExclude = new HashSet<>();
         urlPatternToExclude.add(".*");
 
-        krwkrwSUT.skip(urlPatternToExclude);
-        krwkrwSUT.setDelay(0);
+        webmuncherSUT.skip(urlPatternToExclude);
+        webmuncherSUT.setDelay(0);
 
         // System under test
-        Set<String> hrefs = krwkrwSUT.crawl(host + "/mocksitetestexclude/path/index.html");
+        Set<String> hrefs = webmuncherSUT.crawl(host + "/mocksitetestexclude/path/index.html");
 
         assertEquals(hrefs.size(), 0);
     }
@@ -172,14 +172,14 @@ public class KrwkrwIntegrationTest {
          * /mocksitetestexclude/path/one/two/three/four/four.html
          *
          **/
-        KrwlerAction mockAction = mock(KrwlerAction.class);
-        Krwkrw krwkrwSUT = new Krwkrw(mockAction);
+        FetchAction mockAction = mock(FetchAction.class);
+        Webmuncher webmuncherSUT = new Webmuncher(mockAction);
 
-        krwkrwSUT.skip(".*");
-        krwkrwSUT.setDelay(0);
+        webmuncherSUT.skip(".*");
+        webmuncherSUT.setDelay(0);
 
         // System under test
-        Set<String> hrefs = krwkrwSUT.crawl(host + "/mocksitetestexclude/path/index.html");
+        Set<String> hrefs = webmuncherSUT.crawl(host + "/mocksitetestexclude/path/index.html");
 
         assertEquals(hrefs.size(), 0);
     }
@@ -195,14 +195,14 @@ public class KrwkrwIntegrationTest {
          * /mocksitetestexclude/path/one/two/three/four/four.html
          *
          **/
-        KrwlerAction mockAction = mock(KrwlerAction.class);
-        Krwkrw krwkrwSUT = new Krwkrw(mockAction);
+        FetchAction mockAction = mock(FetchAction.class);
+        Webmuncher webmuncherSUT = new Webmuncher(mockAction);
 
-        krwkrwSUT.skip("\\S+(three.html|four.html)"); // omits three.html and four.html
-        krwkrwSUT.setDelay(0);
+        webmuncherSUT.skip("\\S+(three.html|four.html)"); // omits three.html and four.html
+        webmuncherSUT.setDelay(0);
 
         // System under test
-        Set<String> hrefs = krwkrwSUT.crawl(host + "/mocksitetestexclude/path/index.html");
+        Set<String> hrefs = webmuncherSUT.crawl(host + "/mocksitetestexclude/path/index.html");
 
         assertEquals(hrefs.size(), 3);
         assertTrue(!hrefs.contains(host + "/mocksitetestexclude/path/one/two/three/three.html"));
@@ -220,14 +220,14 @@ public class KrwkrwIntegrationTest {
          * /mocksitetestexclude/path/one/two/three/four/four.html
          *
          **/
-        KrwlerAction mockAction = mock(KrwlerAction.class);
-        Krwkrw krwkrwSUT = new Krwkrw(mockAction);
+        FetchAction mockAction = mock(FetchAction.class);
+        Webmuncher webmuncherSUT = new Webmuncher(mockAction);
 
-        krwkrwSUT.match("\\S+(\\.html)");
-        krwkrwSUT.setDelay(0);
+        webmuncherSUT.match("\\S+(\\.html)");
+        webmuncherSUT.setDelay(0);
 
         // System under test
-        Set<String> hrefs = krwkrwSUT.crawl(host + "/mocksitetestexclude/path/index.html");
+        Set<String> hrefs = webmuncherSUT.crawl(host + "/mocksitetestexclude/path/index.html");
 
         assertEquals(hrefs.size(), 5);
         assertTrue(hrefs.contains(host + "/mocksitetestexclude/path/index.html"));
@@ -249,15 +249,15 @@ public class KrwkrwIntegrationTest {
          * /mocksitetestexclude/path/one/two/three/four/four.html
          *
          **/
-        KrwlerAction mockAction = mock(KrwlerAction.class);
-        Krwkrw krwkrwSUT = new Krwkrw(mockAction);
+        FetchAction mockAction = mock(FetchAction.class);
+        Webmuncher webmuncherSUT = new Webmuncher(mockAction);
 
-        krwkrwSUT.match("\\S+(\\.html)"); // include all
-        krwkrwSUT.skip("\\S+(three.html)", "\\S+(four.html)"); // omits three.html and four.html
-        krwkrwSUT.setDelay(0);
+        webmuncherSUT.match("\\S+(\\.html)"); // include all
+        webmuncherSUT.skip("\\S+(three.html)", "\\S+(four.html)"); // omits three.html and four.html
+        webmuncherSUT.setDelay(0);
 
         // System under test
-        Set<String> hrefs = krwkrwSUT.crawl(host + "/mocksitetestexclude/path/index.html");
+        Set<String> hrefs = webmuncherSUT.crawl(host + "/mocksitetestexclude/path/index.html");
 
         assertEquals(hrefs.size(), 3);
         assertTrue(hrefs.contains(host + "/mocksitetestexclude/path/index.html"));
@@ -278,15 +278,15 @@ public class KrwkrwIntegrationTest {
          * /mocksitetestexclude/path/one/two/three/four/four.html
          *
          **/
-        KrwlerAction mockAction = mock(KrwlerAction.class);
-        Krwkrw krwkrwSUT = new Krwkrw(mockAction);
+        FetchAction mockAction = mock(FetchAction.class);
+        Webmuncher webmuncherSUT = new Webmuncher(mockAction);
 
-        krwkrwSUT.match("\\S+(\\.html)");
-        krwkrwSUT.skip("\\S+(\\.html)");
-        krwkrwSUT.setDelay(0);
+        webmuncherSUT.match("\\S+(\\.html)");
+        webmuncherSUT.skip("\\S+(\\.html)");
+        webmuncherSUT.setDelay(0);
 
         // System under test
-        Set<String> hrefs = krwkrwSUT.crawl(host + "/mocksitetestexclude/path/index.html");
+        Set<String> hrefs = webmuncherSUT.crawl(host + "/mocksitetestexclude/path/index.html");
         assertEquals(hrefs.size(), 0);
     }
 

@@ -1,26 +1,24 @@
-package com.blogspot.geekabyte.krwler.util;
+package com.blogspot.geekabyte.webmuncher.util;
 
-import com.blogspot.geekabyte.krwler.FetchedPage;
-import com.blogspot.geekabyte.krwler.exceptions.FatalError;
-import com.blogspot.geekabyte.krwler.interfaces.KrwlerAction;
+import com.blogspot.geekabyte.webmuncher.FetchedPage;
+import com.blogspot.geekabyte.webmuncher.exceptions.FatalError;
+import com.blogspot.geekabyte.webmuncher.interfaces.FetchAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.sql.DataSource;
 
 /**
- * Implementation of {@link KrwlerAction} that inserts crawled pages
+ * Implementation of {@link FetchAction} that inserts crawled pages
  * to an SQL database.
  *
  * @author Dadepo Aderemi.
  */
-public class JDBCAction implements KrwlerAction {
+public class JDBCAction implements FetchAction {
 
     Logger logger = LoggerFactory.getLogger(JDBCAction.class);
 
@@ -107,7 +105,7 @@ public class JDBCAction implements KrwlerAction {
     }
 
     /**
-     * Builder for creating instances of {@link com.blogspot.geekabyte.krwler.util.JDBCAction}
+     * Builder for creating instances of {@link com.blogspot.geekabyte.webmuncher.util.JDBCAction}
      */
     public static class Builder {
 
@@ -138,9 +136,9 @@ public class JDBCAction implements KrwlerAction {
         }
 
         /**
-         * Returns a properly configured instance of {@link com.blogspot.geekabyte.krwler.util.JDBCAction}
+         * Returns a properly configured instance of {@link com.blogspot.geekabyte.webmuncher.util.JDBCAction}
          *
-         * @return an instance of {@link com.blogspot.geekabyte.krwler.util.JDBCAction}
+         * @return an instance of {@link com.blogspot.geekabyte.webmuncher.util.JDBCAction}
          */
         public JDBCAction buildAction() {
             return jdbcAction;

@@ -1,7 +1,7 @@
-package com.blogspot.geekabyte.krwler;
+package com.blogspot.geekabyte.webmuncher;
 
-import com.blogspot.geekabyte.krwler.exceptions.FatalError;
-import com.blogspot.geekabyte.krwler.util.CSVAction;
+import com.blogspot.geekabyte.webmuncher.exceptions.FatalError;
+import com.blogspot.geekabyte.webmuncher.util.CSVAction;
 import org.junit.*;
 import org.supercsv.io.CsvMapReader;
 import org.supercsv.io.ICsvMapReader;
@@ -46,9 +46,9 @@ public class CSVActionIntegrationTest {
                                        .setCSVFormat(CSVAction.CSVFORMAT.EXCEL)
                                        .buildAction();
 
-        Krwkrw krwkrwSUT = new Krwkrw(csvAction);
+        Webmuncher webmuncherSUT = new Webmuncher(csvAction);
         // System under test
-        Set<String> urls = krwkrwSUT.crawl(HOST + "/mocksitecsvtest/index.html");
+        Set<String> urls = webmuncherSUT.crawl(HOST + "/mocksitecsvtest/index.html");
 
         List<Map<String, String>> maps = readCSV(csvAction.getDestination().toString());
         assertEquals(maps.size(), 2);
@@ -68,9 +68,9 @@ public class CSVActionIntegrationTest {
                 .setCSVFormat(CSVAction.CSVFORMAT.EXCEL)
                 .buildAction();
 
-        Krwkrw krwkrwSUT = new Krwkrw(csvAction);
+        Webmuncher webmuncherSUT = new Webmuncher(csvAction);
         // System under test
-        Set<String> urls = krwkrwSUT.crawl(HOST + "/mocksitecsvtest/index.html");
+        Set<String> urls = webmuncherSUT.crawl(HOST + "/mocksitecsvtest/index.html");
     }
 
     //==================================================== Helpers ====================================================

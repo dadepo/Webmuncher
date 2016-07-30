@@ -1,7 +1,7 @@
-package com.blogspot.geekabyte.krwler;
+package com.blogspot.geekabyte.webmuncher;
 
-import com.blogspot.geekabyte.krwler.exceptions.FatalError;
-import com.blogspot.geekabyte.krwler.util.JDBCAction;
+import com.blogspot.geekabyte.webmuncher.exceptions.FatalError;
+import com.blogspot.geekabyte.webmuncher.util.JDBCAction;
 import org.h2.jdbcx.JdbcDataSource;
 import org.junit.*;
 
@@ -13,7 +13,7 @@ import java.util.Map;
 import static org.junit.Assert.*;
 
 /**
- * Integration test for {@link com.blogspot.geekabyte.krwler.util.JDBCAction}
+ * Integration test for {@link com.blogspot.geekabyte.webmuncher.util.JDBCAction}
  *
  * @author Dadepo Aderemi.
  */
@@ -66,10 +66,10 @@ public class JDBCActionTest {
         expected.put(2,secondRow);
 
 
-        Krwkrw krwkrwSUT = new Krwkrw(jdbcAction);
+        Webmuncher webmuncherSUT = new Webmuncher(jdbcAction);
 
         // System under test
-        krwkrwSUT.crawl(HOST + "/mocksitecsvtest/index.html");
+        webmuncherSUT.crawl(HOST + "/mocksitecsvtest/index.html");
 
 
         Statement statement = dataSource.getConnection().createStatement();
@@ -96,9 +96,9 @@ public class JDBCActionTest {
                 .setTableName("pages")
                 .buildAction();
 
-        Krwkrw krwkrwSUT = new Krwkrw(jdbcAction);
+        Webmuncher webmuncherSUT = new Webmuncher(jdbcAction);
         // System under test
-        krwkrwSUT.crawl(HOST + "/mocksitecsvtest/index.html");
+        webmuncherSUT.crawl(HOST + "/mocksitecsvtest/index.html");
     }
 
 }
