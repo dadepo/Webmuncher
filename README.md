@@ -12,7 +12,7 @@ Maven:
 ```xml
 <dependency>
 <groupid>com.blogspot.geekabyte.webmuncher</groupid>
-<artifactid>krwler</artifactid>
+<artifactid>webmuncher</artifactid>
 <version>${webmuncher.version}</version>
 </dependency>
 ```
@@ -20,7 +20,7 @@ Gradle:
 
 ```groovy
 dependencies {
-    compile "com.blogspot.geekabyte.webmuncher:krwler:$webmuncher.version}"
+    compile "com.blogspot.geekabyte.webmuncher:webmuncher:$webmuncher.version}"
 }
 ```
 Or you can also build from source and have the built jar in your classpath.
@@ -39,7 +39,7 @@ The `webAction` interface has only one method that needs to be implemented. The 
 method is given a `FetchedPage` object which contains the information extracted from every crawled pages. e.g, the HTML
 content of the page, the uri of the page, the title of the page, the time it took `webmuncher` to retrieve the page etc.
 
-Since _version 0.1.2_ `webmuncher` comes with utility `KrwlerActions`, that makes it easy to persist pages crawled.
+Since _version 0.1.2_ `webmuncher` comes with utility `FetchActions`, that makes it easy to persist pages crawled.
 The included utility actions are:
 
 1. *JDBCAction* - for persisting web pages into a relational database. _(since 0.1.2)_
@@ -93,12 +93,12 @@ For example, to use `webmuncher` to extract all the contents of `http://www.exam
         // in case you do the crawling in another thread,
         // you most likely want to be notified when the
         // crawling operations terminates. in such a case,
-        // you should use crawler.onExit(KrwlerExitCallback callback)
+        // you should use crawler.onExit(FetchExitCallback callback)
         // to register the callback
 ```
 
 The above steps makes use of the `CSVAction` that comes with the library. In case you have custom operations you want
-applied to the fetched web pages, then you can easily implement your own `KrwlerAction`. for example a JPA backed
+applied to the fetched web pages, then you can easily implement your own `FetchAction`. for example a JPA backed
  `webAction` implementation may look like:
 
 
