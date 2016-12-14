@@ -4,7 +4,7 @@
 
     <groupId>com.blogspot.geekabyte.webmuncher</groupId>
     <artifactId>webmuncher</artifactId>
-    <version>0.1.4-SNAPSHOT</version>
+    <version>0.1.4</version>
 
     <parent>
         <groupId>org.sonatype.oss</groupId>
@@ -35,7 +35,7 @@
         <url>https://github.com/dadepo/Webmuncher</url>
         <connection>scm:git:https://github.com/dadepo/Webmuncher.git</connection>
         <developerConnection>scm:git:https://github.com/dadepo/Webmuncher.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>webmuncher-0.1.4</tag>
     </scm>
 
     <properties>
