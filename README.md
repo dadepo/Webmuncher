@@ -1,5 +1,5 @@
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.blogspot.geekabyte.krwkrw/krwler/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.blogspot.geekabyte.krwkrw/krwler/)
-[![Javadoc](https://javadoc-emblem.rhcloud.com/doc/com.blogspot.geekabyte.krwkrw/krwler/badge.svg)](http://www.javadoc.io/doc/com.blogspot.geekabyte.krwkrw/krwler/)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.blogspot.geekabyte.webmuncher/webmuncher/badge.svg)](com.blogspot.geekabyte.webmuncher/webmuncher/)
+[![Javadoc](https://javadoc-emblem.rhcloud.com/doc/com.blogspot.geekabyte.webmuncher/webmuncher/badge.svg)](com.blogspot.geekabyte.webmuncher/webmuncher/)
 
 `webmuncher` is a tool that can be used to easily retrieve all the contents of a website. More
 accurately, contents under a single domain. This is the perfect use case which reflects the original need for
@@ -140,10 +140,7 @@ The accompanying Javadoc should be helpful in having an overview of the API. It 
 [Javadoc tool] (http://www.oracle.com/technetwork/articles/java/index-jsp-135444.html) or via Maven using the
 [Maven Javadoc plugin] (http://maven.apache.org/plugins/maven-javadoc-plugin/).
 
-More conveniently, thanks to Javadoc.io, you can also access the most recent Javadoc [online](http://www.javadoc.io/doc/com.blogspot.geekabyte.webmuncher/krwler/)
-
-The API for the older version: (Krakraw) can be find online [here](http://www.javadoc.io/doc/com.blogspot.geekabyte.krawkraw/krawler/)
-
+More conveniently, thanks to Javadoc.io, you can also access the most recent Javadoc [online](http://www.javadoc.io/doc/com.blogspot.geekabyte.webmuncher/webmuncher/)
 
 ### Licenses
 [The MIT License (MIT)] (http://www.opensource.org/licenses/mit-license.php)
