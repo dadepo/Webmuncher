@@ -33,9 +33,9 @@ The announcement for the most recent release can be seen [here](http://geekabyte
 
 `webmuncher` is designed around the [Strategy Pattern] (http://en.wikipedia.org/wiki/Strategy_pattern). The main object that
 would be used is the `webmuncher` object, while the client using `webmuncher` would need to provide an implementation of the
-`webAction` interface which contains code that operates on every fetched page represented by the `FetchedPage` object
+`FetchAction` interface which contains code that operates on every fetched page represented by the `FetchedPage` object
 
-The `webAction` interface has only one method that needs to be implemented. The `execute()` method. The `execute()`
+The `FetchAction` interface has only one method that needs to be implemented. The `execute()` method. The `execute()`
 method is given a `FetchedPage` object which contains the information extracted from every crawled pages. e.g, the HTML
 content of the page, the uri of the page, the title of the page, the time it took `webmuncher` to retrieve the page etc.
 
@@ -99,11 +99,11 @@ For example, to use `webmuncher` to extract all the contents of `http://www.exam
 
 The above steps makes use of the `CSVAction` that comes with the library. In case you have custom operations you want
 applied to the fetched web pages, then you can easily implement your own `FetchAction`. for example a JPA backed
- `webAction` implementation may look like:
+ `FetchAction` implementation may look like:
 
 
 ```java
-class CustomJpaAction implements webAction {
+class CustomJpaAction implements FetchAction {
 
         private EntityManager em;
         private EntityManagerFactory emf;
