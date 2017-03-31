@@ -3,7 +3,7 @@
 
 `webmuncher` is a tool that can be used to easily retrieve all the contents of a website. More
 accurately, contents under a single domain. This is the perfect use case which reflects the original need for
-which it was created: Read more about that [here] (http://geekabyte.blogspot.be/2014/12/a-web-scrapercrawler-in-java-krwkrw.html)
+which it was created: [Read more about that here](http://geekabyte.blogspot.be/2014/12/a-web-scrapercrawler-in-java-krawkraw.html)
 
 `webmuncher` is available via Maven central, and you can easily drop it into your project with this coordinates:
 
@@ -25,9 +25,9 @@ dependencies {
 ```
 Or you can also build from source and have the built jar in your classpath.
 
-The available releases can be seen [here] (https://github.com/dadepo/webmuncher/releases)
+The available releases can be seen [here](https://github.com/dadepo/webmuncher/releases)
 
-The announcement for the most recent release can be seen [here](http://geekabyte.blogspot.nl/2015/09/webmuncher-013-released.html)
+The announcement for release of version 0.1.3 can be found [here](http://geekabyte.blogspot.in/2015/09/krwkrw-013-released.html)
 
 ###How to use webmuncher.
 
