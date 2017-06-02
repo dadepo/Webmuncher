@@ -43,7 +43,6 @@ Since _version 0.1.2_ `webmuncher` comes with utility `FetchActions`, that makes
 The included utility actions are:
 
 1. *JDBCAction* - for persisting web pages into a relational database. _(since 0.1.2)_
-2. *ElasticSearchAction* - for indexing web pages into ElasticSearch. _(since 0.1.2)_
 3. *CSVAction* - for saving web pages into a CSV file. _(since 0.1.2)_
 
 For example, to use `webmuncher` to extract all the contents of `http://www.example.com` into a CSV file, you do:
