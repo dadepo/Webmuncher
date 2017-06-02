@@ -10,19 +10,17 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.math.BigInteger;
+import java.security.SecureRandom;
 
 /**
  * Jetty server used for HTTP integration test
  *
  * @author Dadepo Aderemi.
  */
-public class TestServer {
+public class EndlessTestServer {
 
-    private final Logger logger = LoggerFactory.getLogger(TestServer.class);
+    private final Logger logger = LoggerFactory.getLogger(EndlessTestServer.class);
     public static final int HTTP_PORT = 50036;
 
     private Server server;
@@ -37,6 +35,10 @@ public class TestServer {
         server.stop();
     }
 
+    private String getRandomString() {
+        return new BigInteger(130, new SecureRandom()).toString(32) + ".html";
+    }
+
     public Handler getMockHandler() {
         Handler handler = new AbstractHandler() {
 
@@ -47,31 +49,19 @@ public class TestServer {
                 response.setStatus(HttpServletResponse.SC_OK);
                 baseRequest.setHandled(true);
                 String content = getContent(target);
-                if (String.valueOf(HttpServletResponse.SC_NOT_FOUND).equals(content)) {
-                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                }
-                response.getWriter().println(content);
+
+                String page = content.replace("{{X}}", getRandomString()).replace("{{Y}}", getRandomString());
+                response.getWriter().println(page);
             }
 
             private String getContent(String filename) {
-                byte[] contentAsBytes;
-                String pathAsString;
-                try {
-                    URL pathAsUrl = this.getClass().getResource(filename);
-                    if (pathAsUrl == null) {
-                        pathAsString = "";
-                    } else {
-                        pathAsString = pathAsUrl.getPath();
-                    }
-                    contentAsBytes = Files.readAllBytes(Paths.get(pathAsString));
-                } catch (IOException e) {
-                    logger.error("Exception while reading {}", filename);
-                    return String.valueOf(HttpServletResponse.SC_NOT_FOUND);
-                }
-                if (contentAsBytes != null) {
-                    return new String(contentAsBytes, StandardCharsets.UTF_8);
-                }
-                return "";
+
+                return "<html><head></head>" +
+                        "<body>" +
+                        "<a href='/{{X}}'></a>" +
+                        "<a href='/{{Y}}'></a>" +
+                        "</body>" +
+                        "</html>";
             }
         };
         return handler;

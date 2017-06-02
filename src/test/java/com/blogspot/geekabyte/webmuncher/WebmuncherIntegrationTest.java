@@ -7,6 +7,7 @@ import org.junit.runner.*;
 import org.mockito.*;
 import org.mockito.runners.*;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -31,7 +32,29 @@ public class WebmuncherIntegrationTest {
     public void shutDownServer() throws Exception {
         testServer.shutDown();
     }
-    
+
+    @Test
+    public void testBuilder() throws Exception {
+        Webmuncher webmuncher = Webmuncher.newBuilder()
+                .withDelayInBetweenRequest(2)
+                .withFetchAction(mock(FetchAction.class))
+                .withExcludePattern(Collections.EMPTY_SET)
+                .withExcludeUrl(Collections.EMPTY_SET)
+                .withExitCallBack(mock(FetchExitCallback.class))
+                .withMatchPattern(Collections.EMPTY_SET)
+                .withMaxRetry(3)
+                .withReferrals(Collections.EMPTY_LIST)
+                .withRequestTimeOut(4)
+                .withUserAgents(Collections.EMPTY_LIST)
+                .build();
+
+        assertEquals(webmuncher.getDelay(), 2);
+        assertEquals(webmuncher.getExcludeURLs(), Collections.EMPTY_SET);
+        assertEquals(webmuncher.getReferrals(), Collections.EMPTY_LIST);
+        assertEquals(webmuncher.getUserAgents(), Collections.EMPTY_LIST);
+    }
+
+
     @Test
     public void test_extractAllFromUrl() throws Exception {
         FetchAction mockAction = mock(FetchAction.class);
@@ -289,5 +312,4 @@ public class WebmuncherIntegrationTest {
         Set<String> hrefs = webmuncherSUT.crawl(host + "/mocksitetestexclude/path/index.html");
         assertEquals(hrefs.size(), 0);
     }
-
 }

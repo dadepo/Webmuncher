@@ -1,5 +1,6 @@
 package com.blogspot.geekabyte.webmuncher;
 
+import com.blogspot.geekabyte.webmuncher.interfaces.ErrorAction;
 import com.blogspot.geekabyte.webmuncher.interfaces.FetchAction;
 import com.blogspot.geekabyte.webmuncher.interfaces.callbacks.FetchExitCallback;
 import org.jsoup.Jsoup;
@@ -51,6 +52,7 @@ public class Webmuncher {
     private List<String> referrals = new ArrayList<>();
     private FetchAction action;
     private FetchExitCallback fetchExitCallback;
+    private ErrorAction errorAction;
     private Set<String> excludeURLs = new HashSet<>();
 
     private Set<Pattern> includePattern = new LinkedHashSet<>();
@@ -58,13 +60,97 @@ public class Webmuncher {
     private RandomDelay randomDelay;
     private int timeout = 1000;
 
+    public Webmuncher() {
+
+    }
+
+    public static Builder newBuilder() {
+        return new Builder();
+    }
+
+    public void setFetchAction(FetchAction fetchAction) {
+        this.action = fetchAction;
+    }
+
+    public void setErrorAction(ErrorAction errorAction) {
+        this.errorAction = errorAction;
+    }
+
+    public static class Builder {
+        private Webmuncher webmuncher;
+
+        public Builder withFetchAction(FetchAction fetchAction) {
+            webmuncher.setFetchAction(fetchAction);
+            return this;
+        }
+
+        public Builder withMatchPattern(Set<String> includePattern) {
+            webmuncher.match(includePattern);
+            return this;
+        }
+
+        public Builder withExcludePattern(Set<String> excludePattern) {
+            webmuncher.skip(excludePattern);
+            return this;
+        }
+
+        public Builder withExcludeUrl(Set<String> excludeURLs) {
+            webmuncher.setExcludeURLs(excludeURLs);
+            return this;
+        }
+
+        public Builder withDelayInBetweenRequest(int delay) {
+            webmuncher.setDelay(delay);
+            return this;
+        }
+
+        public Builder withRequestTimeOut(int timeOut) {
+            webmuncher.setTimeout(timeOut);
+            return this;
+        }
+
+        public Builder withMaxRetry(int maxRetry) {
+            webmuncher.setMaxRetry(maxRetry);
+            return this;
+        }
+
+        public Builder withUserAgents(List<String> userAgents) {
+            webmuncher.setUserAgents(userAgents);
+            return this;
+        }
+
+        public Builder withReferrals(List<String> referrals) {
+            webmuncher.setReferrals(referrals);
+            return this;
+        }
+
+        public Builder withExitCallBack(FetchExitCallback fetchExitCallback) {
+            webmuncher.onExit(fetchExitCallback);
+            return this;
+        }
+
+        ;
+
+        public Builder withErrorAction(ErrorAction errorAction) {
+            webmuncher.setErrorAction(errorAction);
+            return this;
+        }
+
+        public Webmuncher build() {
+            return this.webmuncher;
+        }
+
+        private Builder() {
+            this.webmuncher = new Webmuncher();
+        }
+    }
 
     /**
      * Sets the regex patterns a URL should match against in other to be crawled
      * The patterns are processed based on order of insertion. The first pattern inserted
      * will be processed first, the last inserted pattern will be processed last. It is
      * thus advised to provide the patterns in a LinkedHashSet
-     *
+     * <p>
      * The first pattern to match fulfills the match requirement, which means specific patterns
      * should be included first.
      *
@@ -83,7 +169,7 @@ public class Webmuncher {
      * The patterns are processed based on order of insertion. The first pattern inserted
      * will be processed first, the last inserted pattern will be processed last. It is
      * thus advised to provide the patterns in a LinkedHashSet
-     *
+     * <p>
      * The first pattern to match fulfills the match requirement, which means specific patterns
      * should be included first.
      *
@@ -101,7 +187,7 @@ public class Webmuncher {
      * Sets the regex patterns a URL should match against in other to be excluded from being crawled
      * The patterns are processed based on order of insertion. The first pattern inserted
      * will be processed first, the last inserted pattern will be processed last.
-     *
+     * <p>
      * The first pattern to match fulfills the skip requirement, which means specific patterns
      * should be included first.
      *
@@ -118,7 +204,7 @@ public class Webmuncher {
      * Sets the regex patterns a URL should match against in other to be excluded from being crawled
      * The patterns are processed based on order of insertion. The first pattern inserted
      * will be processed first, the last inserted pattern will be processed last.
-     *
+     * <p>
      * The first pattern to match fulfills the skip requirement, which means specific patterns
      * should be included first.
      *
@@ -180,7 +266,7 @@ public class Webmuncher {
 
     /**
      * Set's the lower and upper bound for the delay (in seconds) between each crawling requests
-     *
+     * <p>
      * The required delay is random generated with each requests. The generated random delay will be a number
      * equals or greater than the minDelay but less or equals to the maxDelay
      *
@@ -194,6 +280,7 @@ public class Webmuncher {
     /**
      * Set's the time in seconds for the connection to wait before
      * a {@link SocketTimeoutException} is thrown. The Default is 10 seconds
+     *
      * @param timeout the amount of seconds to wait before a timeout
      */
     public void setTimeout(int timeout) {
@@ -267,7 +354,6 @@ public class Webmuncher {
      * @param url         the URL to start extracting from
      * @param excludeURLs a set that contains already crawled URLs. You can include URLS you want omitted
      * @return A set containing all the URL crawled
-     *
      * @throws java.io.IOException            if any.
      * @throws java.lang.InterruptedException if any.
      * @throws java.net.URISyntaxException    if any.
@@ -275,7 +361,7 @@ public class Webmuncher {
     private Set<String> doCrawl(String url, Set<String> excludeURLs)
             throws IOException, InterruptedException, URISyntaxException {
         setBaseUrl(url);
-        return extractor(url, excludeURLs, new HashSet<String>(), "");
+        return nonRecursiveExtractor(url, excludeURLs);
     }
 
     /**
@@ -284,7 +370,6 @@ public class Webmuncher {
      *
      * @param url the URL to start extracting from
      * @return A set containing all the URL crawled
-     *
      * @throws java.io.IOException            if any.
      * @throws java.lang.InterruptedException if any.
      * @throws java.net.URISyntaxException    if any.
@@ -310,14 +395,10 @@ public class Webmuncher {
             return false;
         }
 
-
-        boolean shouldExclude;
-
-        shouldExclude = excludePattern.stream().anyMatch(pattern -> {
+        return excludePattern.stream().anyMatch(pattern -> {
             Matcher matcher = pattern.matcher(url);
             return matcher.matches();
         });
-        return shouldExclude;
     }
 
     private boolean shouldInclude(String url) {
@@ -350,7 +431,6 @@ public class Webmuncher {
      * @param url         a {@link java.lang.String} object.
      * @param excludeURLs a {@link java.util.Set} object.
      * @return {@link java.util.concurrent.Future} of a set of urls
-     *
      * @throws java.io.IOException            if any.
      * @throws java.lang.InterruptedException if any.
      * @throws java.net.URISyntaxException    if any.
@@ -363,7 +443,7 @@ public class Webmuncher {
         executorService = Executors.newSingleThreadExecutor();
 
         Future<Set<String>> future = executorService.submit(
-                () -> extractor(url, excludeURLs, new HashSet<>(), "")
+                () -> nonRecursiveExtractor(url, excludeURLs)
         );
 
         return future;
@@ -376,7 +456,6 @@ public class Webmuncher {
      *
      * @param url a {@link java.lang.String} object.
      * @return {@link java.util.concurrent.Future} of a set of urls
-     *
      * @throws java.io.IOException            if any.
      * @throws java.lang.InterruptedException if any.
      * @throws java.net.URISyntaxException    if any.
@@ -391,7 +470,6 @@ public class Webmuncher {
      *
      * @param url the URL to crawl
      * @return {@link org.jsoup.nodes.Document}
-     *
      * @throws java.io.IOException if any.
      */
     private Document getDocumentFromUrl(String url) throws IOException {
@@ -410,154 +488,149 @@ public class Webmuncher {
     /**
      * Extracts all href from a {@link org.jsoup.nodes.Document} using absolute resolution
      *
-     * @param doc the {@link org.jsoup.nodes.Document} to extrach hrefs from
-     * @return list of {@link org.jsoup.nodes.Document}
+     * @param doc the {@link Document} to extrach hrefs from
+     * @return set of {@link org.jsoup.nodes.Document}
      */
-    private List<String> extractAbsHref(Document doc) {
-        List<String> hrefString = new ArrayList<String>();
+    private Set<String> extractAbsHref(Document doc) {
+        Set<String> hrefString = new HashSet<>();
         Element content = doc.body();
         Elements links = content.getElementsByTag("a");
         for (Element link : links) {
             String href = link.attr("abs:href");
             hrefString.add(href);
         }
+
+        // filter out external urls
+        hrefString = filterOutParamsGeneratedString(hrefString);
+        hrefString = filterOutExternalUrls(hrefString);
         return hrefString;
     }
 
-    private Set<String> extractor(String url, Set<String> excludeURLs, Set<String> crawledURLs, String sourceUrl)
+    private Set<String> nonRecursiveExtractor(String url, Set<String> excludeURLs)
             throws IOException, InterruptedException {
 
+        if (!include(url)) {
+            return Collections.EMPTY_SET;
+        }
+
+        Set<String> crawledURLs = new HashSet<>();
 
         if (excludeURLs == null) {
             excludeURLs = new HashSet<>();
         }
 
-        if (crawledURLs == null) {
-            crawledURLs = new HashSet<>();
-        } else {
-            excludeURLs.addAll(crawledURLs);
-        }
+        Long before = new Date().getTime();
+        Document document = getDocumentFromUrl(url);
+        Long after = new Date().getTime();
+        Long loadTime = after - before;
 
-        Document doc;
-        Set<String> hrefs = new HashSet<>();
-        Map<String, Document> out = new HashMap<>();
-        // first recursive break condition
-        if (!excludeURLs.contains(url)) {
+        crawledURLs.add(url);
 
-            // If url does not match include, then add to urls to be excluded.
-            if (!include(url)) {
-                excludeURLs.add(url);
-            }
+        FetchedPage firstPage = new FetchedPage();
+        firstPage.setUrl(url);
+        firstPage.setStatus(200);
+        firstPage.setHtml(document.outerHtml());
+        firstPage.setPlainText(Jsoup.parse(document.outerHtml()).text());
+        firstPage.setTitle(document.title());
+        firstPage.setLoadTime(loadTime);
+        firstPage.setSourceUrl("index");
+        action.execute(firstPage);
 
-            FetchedPage fetchedPage = new FetchedPage();
-            try {
-                // Extract HTML from URL passed in
-                Long before = new Date().getTime();
-                doc = getDocumentFromUrl(url);
-                Long after = new Date().getTime();
-                Long loadTime = after - before;
+        Set<Url> urls = extractAbsHref(document)
+                .stream()
+                .map(fetched -> stringToUrlWithSource(fetched, url))
+                .collect(Collectors.toSet());
 
-                // Get all the href in the retrieved page
-                hrefs = new HashSet<>(extractAbsHref(doc));
+        while (stillToFetch(urls.stream().map(x -> x.getUrl()).collect(Collectors.toSet()), excludeURLs, crawledURLs)) {
+            for (Url toCrawl : new ArrayList<>(urls)) {
+                if (shouldBeCrawled(toCrawl.getUrl(), crawledURLs)) {
+                    FetchedPage fetchedPage = new FetchedPage();
+                    try {
+                        document = getDocumentFromUrl(toCrawl.getUrl());
+                        fetchedPage.setUrl(toCrawl.getUrl());
+                        fetchedPage.setStatus(200);
+                        fetchedPage.setHtml(document.outerHtml());
+                        fetchedPage.setPlainText(Jsoup.parse(document.outerHtml()).text());
+                        fetchedPage.setTitle(document.title());
+                        fetchedPage.setLoadTime(loadTime);
+                        fetchedPage.setSourceUrl(toCrawl.getSourceUrl());
+                        action.execute(fetchedPage);
 
-                // perform action on fetchedPage
-                // Only do so if the url matches url to be included
-                // for processing
-                if (include(url)) {
 
-                    // update processing variables
-                    // tempresult for keeping processed URL to prevent double processing
-                    // pagesOut the map<String, Document> that would be the final result
-                    crawledURLs.add(url);
-                    out.put(url, doc);
+                        Set<Url> urlsToFetch = extractAbsHref(document)
+                                .stream()
+                                .map(fetched -> stringToUrlWithSource(fetched, url))
+                                .collect(Collectors.toSet());
 
-                    fetchedPage.setUrl(url);
-                    fetchedPage.setStatus(200);
-                    fetchedPage.setHtml(doc.outerHtml());
-                    fetchedPage.setPlainText(Jsoup.parse(doc.outerHtml()).text());
-                    fetchedPage.setTitle(doc.title());
-                    fetchedPage.setLoadTime(loadTime);
-                    fetchedPage.setSourceUrl(sourceUrl);
-
-                    action.execute(fetchedPage);
-                    logger.info("Crawled {}", url);
-                } else {
-                    logger.info("Crawled {} but excluding from processing", url);
-                }
-
-                if (randomDelay != null) {
-                    delay = randomDelay.getDelay();
-                }
-                logger.info("{} seconds delay before next request", delay);
-                Thread.sleep(delay * 1000);
-            } catch (IOException e) {
-
-                // only execute the exception logic if the url attempted was to be included.
-                if (include(url)) {
-                    if (e instanceof UnsupportedMimeTypeException) {
-                        fetchedPage.setStatus(415);
-                        crawledURLs.add(url);
-                    } else if (e instanceof SocketTimeoutException) {
-                        // it is a SocketTimeout Exception, it is probably a good idea to chill init?
-                        Thread.sleep(3000);
-                        // Things should have cooled off a bit? proceed.
-                        Integer attempts = retryLog.get(url);
-                        if (attempts == null) {
-                            attempts = 0;
-                        }
-                        if (attempts == 0 && maxRetry != 0) {
-                            retryLog.put(url, 1);
-                            logger.info("Attempting the first retry to fetch url: {}", url);
-                            extractor(url, excludeURLs, crawledURLs, "");
-                            return hrefs;
-                        } else if (attempts < maxRetry) {
-                            retryLog.put(url, ++attempts);
-                            logger.info("Attempting to fetch url: {} as {} attempts", url, attempts);
-                            extractor(url, excludeURLs, crawledURLs, "");
-                            return hrefs;
-                        } else {
-                            fetchedPage.setStatus(408);
-                            crawledURLs.add(url);
-                        }
-                    } else {
-                        fetchedPage.setStatus(404);
-                        crawledURLs.add(url);
+                        urls.addAll(urlsToFetch);
+                        urls.remove(url);
+                        crawledURLs.add(toCrawl.getUrl());
+                    } catch (IOException e) {
+                            if (e instanceof UnsupportedMimeTypeException) {
+                                fetchedPage.setStatus(415);
+                                crawledURLs.add(toCrawl.getUrl());
+                            } else if (e instanceof SocketTimeoutException) {
+                                // it is a SocketTimeout Exception, it is probably a good idea to chill init?
+                                Thread.sleep(3000);
+                                // TODO add this link to a list of timedout url to be fetched later
+                            } else {
+                                fetchedPage.setStatus(404);
+                                crawledURLs.add(toCrawl.getUrl());
+                            }
+                            fetchedPage.setUrl(toCrawl.getUrl());
+                            fetchedPage.setSourceUrl(toCrawl.getUrl()); // TODO is it possible to find this?
+                            // the action's execute is still called because
+                            // we want to save the url that were broken, for instance
+                            action.execute(fetchedPage);
+                            if (errorAction != null) {
+                                errorAction.process(url, e);
+                            }
+                            logger.error("Failed to crawl {}. With error message: {}", url, e);
                     }
-                    fetchedPage.setUrl(url);
-                    fetchedPage.setSourceUrl(sourceUrl);
-                    // the action's execute is still called because
-                    // we want to save the url that were broken, for instance
-                    action.execute(fetchedPage);
-                    logger.error("Failed to crawl {}. With error message: {}", url, e);
                 }
             }
-        } else {
-            return hrefs;
         }
-        // second recursive break condition
-        if (hrefs.size() == 0) {
-            return hrefs;
-        } else {
-            // filter out external url
-            hrefs = filterOutParamsGeneratedString(hrefs);
-            hrefs = filterOutExternalUrls(hrefs);
-            for (String href : hrefs) {
-                extractor(href, excludeURLs, crawledURLs, url);
-            }
 
-            if (lastExtractorCall()) {
-                destroyAsync();
-                fireOnExit(crawledURLs);
-            }
-            return crawledURLs;
+        destroyAsync();
+        fireOnExit(crawledURLs);
+
+        return crawledURLs;
+    }
+
+    private boolean shouldBeCrawled(String toCrawl, Set<String> crawledURLs) {
+        if (crawledURLs.contains(toCrawl) || excludeURLs.contains(toCrawl)) {
+            return false;
         }
+
+        if (!include(toCrawl)) {
+            excludeURLs.add(toCrawl);
+            // should stop processing right?
+            logger.info("Encountered {} but excluding from crawling", toCrawl);
+            return false;
+        }
+        return true;
+    }
+
+    private boolean stillToFetch(Set<String> urlsToFetch, Set<String> excludeURLs, Set<String> crawledURLs) {
+        HashSet<String> copyOfUrlsToFetch = new HashSet<>(urlsToFetch);
+        copyOfUrlsToFetch.removeAll(excludeURLs);
+        copyOfUrlsToFetch.removeAll(crawledURLs);
+        return !copyOfUrlsToFetch.isEmpty();
+    }
+
+
+    private Url stringToUrlWithSource(String fetched, String sourceUrl) {
+            Url fetchedUrl = new Url();
+            fetchedUrl.setSourceUrl(sourceUrl);
+            fetchedUrl.setUrl(fetched);
+            return fetchedUrl;
     }
 
     private Set<String> filterOutExternalUrls(Set<String> urls) {
         urls = urls.stream()
-                   .filter(u -> u.contains(baseUrl))
-                   .filter(u -> !u.contains("mailto"))
-                   .collect(Collectors.toSet());
+                .filter(u -> u.contains(baseUrl))
+                .filter(u -> !u.contains("mailto"))
+                .collect(Collectors.toSet());
 
         return urls;
     }
@@ -637,7 +710,29 @@ public class Webmuncher {
         }
 
         public int getDelay() {
-            return rand.nextInt(max-min  + 1) + min;
+            return rand.nextInt(max - min + 1) + min;
+        }
+    }
+
+
+    private class Url {
+        private String url;
+        private String sourceUrl;
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+
+        public String getSourceUrl() {
+            return sourceUrl;
+        }
+
+        public void setSourceUrl(String sourceUrl) {
+            this.sourceUrl = sourceUrl;
         }
     }
 }
