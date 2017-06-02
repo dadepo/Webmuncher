@@ -3,7 +3,7 @@
 
 `webmuncher` is a tool that can be used to easily retrieve all the contents of a website. More
 accurately, contents under a single domain. This is the perfect use case which reflects the original need for
-which it was created: Read more about that [here] (http://geekabyte.blogspot.be/2014/12/a-web-scrapercrawler-in-java-krwkrw.html)
+which it was created: [Read more about that here](http://geekabyte.blogspot.be/2014/12/a-web-scrapercrawler-in-java-krawkraw.html)
 
 `webmuncher` is available via Maven central, and you can easily drop it into your project with this coordinates:
 
@@ -25,13 +25,13 @@ dependencies {
 ```
 Or you can also build from source and have the built jar in your classpath.
 
-The available releases can be seen [here] (https://github.com/dadepo/webmuncher/releases)
+The available releases can be seen [here](https://github.com/dadepo/webmuncher/releases)
 
-The announcement for the most recent release can be seen [here](http://geekabyte.blogspot.nl/2015/09/webmuncher-013-released.html)
+The announcement for release of version 0.1.3 can be found [here](http://geekabyte.blogspot.in/2015/09/krwkrw-013-released.html)
 
 ###How to use webmuncher.
 
-`webmuncher` is designed around the [Strategy Pattern] (http://en.wikipedia.org/wiki/Strategy_pattern). The main object that
+`webmuncher` is designed around the [Strategy Pattern](http://en.wikipedia.org/wiki/Strategy_pattern). The main object that
 would be used is the `webmuncher` object, while the client using `webmuncher` would need to provide an implementation of the
 `FetchAction` interface which contains code that operates on every fetched page represented by the `FetchedPage` object
 
@@ -136,10 +136,10 @@ class CustomJpaAction implements FetchAction {
 ###Overview of webmuncher API.
 
 The accompanying Javadoc should be helpful in having an overview of the API. It can be gotten using the
-[Javadoc tool] (http://www.oracle.com/technetwork/articles/java/index-jsp-135444.html) or via Maven using the
-[Maven Javadoc plugin] (http://maven.apache.org/plugins/maven-javadoc-plugin/).
+[Javadoc tool](http://www.oracle.com/technetwork/articles/java/index-jsp-135444.html) or via Maven using the
+[Maven Javadoc plugin](http://maven.apache.org/plugins/maven-javadoc-plugin/).
 
 More conveniently, thanks to Javadoc.io, you can also access the most recent Javadoc [online](http://www.javadoc.io/doc/com.blogspot.geekabyte.webmuncher/webmuncher/)
 
 ### Licenses
-[The MIT License (MIT)] (http://www.opensource.org/licenses/mit-license.php)
+[The MIT License (MIT)](http://www.opensource.org/licenses/mit-license.php)
