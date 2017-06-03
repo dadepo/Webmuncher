@@ -533,7 +533,7 @@ public class Webmuncher {
         firstPage.setPlainText(Jsoup.parse(document.outerHtml()).text());
         firstPage.setTitle(document.title());
         firstPage.setLoadTime(loadTime);
-        firstPage.setSourceUrl("index");
+        firstPage.setSourceUrl("");
         action.execute(firstPage);
 
         Set<Url> urls = extractAbsHref(document)

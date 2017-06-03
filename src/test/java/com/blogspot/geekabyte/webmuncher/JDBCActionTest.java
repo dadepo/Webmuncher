@@ -76,6 +76,7 @@ public class JDBCActionTest {
         ResultSet result = statement.executeQuery("SELECT * from PAGES");
         int row = 1;
         while(result.next()) {
+            assertEquals(result.getString("source_url"), expected.get(row).get("sourceUrl"));
             assertEquals(result.getString("title"), expected.get(row).get("title"));
             assertEquals(result.getString("url"), expected.get(row).get("url"));
             assertEquals(result.getString("status"), expected.get(row).get("status"));
