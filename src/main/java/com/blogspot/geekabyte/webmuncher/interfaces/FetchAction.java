@@ -17,5 +17,5 @@ public interface FetchAction {
      *
      * @param page a {@link com.blogspot.geekabyte.webmuncher.FetchedPage} object.
      */
-    void execute(FetchedPage page);
+    void process(FetchedPage page);
 }

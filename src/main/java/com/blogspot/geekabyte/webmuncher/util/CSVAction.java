@@ -131,7 +131,7 @@ public class CSVAction implements FetchAction {
     }
 
     @Override
-    public void execute(FetchedPage page) {
+    public void process(FetchedPage page) {
         try {
             if (isFirstPage) {
                 // Create new file and add headers

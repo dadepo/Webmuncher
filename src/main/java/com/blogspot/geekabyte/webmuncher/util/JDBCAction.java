@@ -46,7 +46,7 @@ public class JDBCAction implements FetchAction {
     }
 
     @Override
-    public void execute(FetchedPage page) {
+    public void process(FetchedPage page) {
         if (dataSource == null) {
             String msg = "Cannot save crawled pages. A database datasource was not set. Make sure you call "
                     + "setDataSource on builder";

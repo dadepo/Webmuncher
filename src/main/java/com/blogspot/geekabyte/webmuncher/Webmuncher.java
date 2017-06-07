@@ -534,7 +534,7 @@ public class Webmuncher {
         firstPage.setTitle(document.title());
         firstPage.setLoadTime(loadTime);
         firstPage.setSourceUrl("");
-        action.execute(firstPage);
+        action.process(firstPage);
 
         Set<Url> urls = extractAbsHref(document)
                 .stream()
@@ -554,7 +554,7 @@ public class Webmuncher {
                         fetchedPage.setTitle(document.title());
                         fetchedPage.setLoadTime(loadTime);
                         fetchedPage.setSourceUrl(toCrawl.getSourceUrl());
-                        action.execute(fetchedPage);
+                        action.process(fetchedPage);
 
 
                         Set<Url> urlsToFetch = extractAbsHref(document)
@@ -579,9 +579,9 @@ public class Webmuncher {
                             }
                             fetchedPage.setUrl(toCrawl.getUrl());
                             fetchedPage.setSourceUrl(toCrawl.getUrl()); // TODO is it possible to find this?
-                            // the action's execute is still called because
+                            // the action's process is still called because
                             // we want to save the url that were broken, for instance
-                            action.execute(fetchedPage);
+                            action.process(fetchedPage);
                             if (errorAction != null) {
                                 errorAction.process(url, e);
                             }

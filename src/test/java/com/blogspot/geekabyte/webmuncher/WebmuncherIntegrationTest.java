@@ -65,7 +65,7 @@ public class WebmuncherIntegrationTest {
         Set<String> hrefs = webmuncherSUT.crawl(host + "/mocksite/index.html");
 
         assertEquals(hrefs.size(), 6);
-        verify(mockAction, times(6)).execute(any(FetchedPage.class));
+        verify(mockAction, times(6)).process(any(FetchedPage.class));
     }
 
     @Test
@@ -82,7 +82,7 @@ public class WebmuncherIntegrationTest {
         Set<String> hrefs = webmuncherSUT.crawl(host + "/mocksitetestexclude/index.html");
 
         assertEquals(hrefs.size(), 2);
-        verify(mockAction, times(2)).execute(any(FetchedPage.class));
+        verify(mockAction, times(2)).process(any(FetchedPage.class));
     }
 
     @Test
@@ -97,7 +97,7 @@ public class WebmuncherIntegrationTest {
         Set<String> hrefs = webmuncherSUT.crawl(host + "/mocksitetestexclude/index.html");
 
         assertEquals(hrefs.size(), 2);
-        verify(mockAction, times(2)).execute(any(FetchedPage.class));
+        verify(mockAction, times(2)).process(any(FetchedPage.class));
     }
 
     @Test
@@ -112,7 +112,7 @@ public class WebmuncherIntegrationTest {
         Set<String> hrefs = futureHrefs.get();
 
         assertEquals(hrefs.size(), 6);
-        verify(mockAction, times(6)).execute(any(FetchedPage.class));
+        verify(mockAction, times(6)).process(any(FetchedPage.class));
 
     }
     
@@ -130,7 +130,7 @@ public class WebmuncherIntegrationTest {
         Set<String> hrefs = futureHrefs.get();
 
         assertEquals(hrefs.size(), 6);
-        verify(mockAction, times(6)).execute(any(FetchedPage.class));
+        verify(mockAction, times(6)).process(any(FetchedPage.class));
         verify(mockCallBack).callBack(anySet());
 
     }
@@ -146,7 +146,7 @@ public class WebmuncherIntegrationTest {
 
         ArgumentCaptor<FetchedPage> captor = ArgumentCaptor.forClass(FetchedPage.class);
         assertEquals(hrefs.size(), 5);
-        verify(mockAction, times(5)).execute(captor.capture());
+        verify(mockAction, times(5)).process(captor.capture());
         List<FetchedPage> fetchedPages = captor.getAllValues();
         
         int notFoundCount = 0;
